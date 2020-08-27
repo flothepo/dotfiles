@@ -1,0 +1,8 @@
+/** Configured For Applets **/
+
+configuration {
+  modi: "drun,window,ssh,combi";
+  show-icons:         true;
+  icon-theme:         "ePapirus";
+  theme: "sidetab";
+}
