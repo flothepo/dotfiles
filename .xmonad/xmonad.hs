@@ -74,6 +74,10 @@ myKeys conf@(XConfig { XMonad.modMask = modM }) =
          , xmonadNotify "Recompiled"
            >> spawn "pkill xmobar;xmonad --recompile && xmonad --restart"
          )
+         -- C-M-l to send system to sleep
+       , ( (controlMask .|. mod1Mask, xK_l)
+         , spawn "systemctl suspend"
+         )
        -- Utilities
        , ((modM, xK_b), spawn myBrowser)
        , ((modM, xK_e), spawn myEditor)
