@@ -24,6 +24,9 @@ import           XMonad.Hooks.EwmhDesktops
 
 import           XMonad.Util.SpawnOnce
 
+import           Graphics.X11.ExtraTypes.XF86
+import           Text.Printf
+
 
 myTerminal :: String
 myTerminal = "alacritty"
@@ -39,6 +42,17 @@ myFileManager = "thunar"
 
 myNormalBorderColor :: String
 myNormalBorderColor = "#aaaaaa"
+
+myAudioControl :: String -> X ()
+myAudioControl =
+  spawn . ("~/.config/polybar/scripts/pulseaudio-control.sh " ++)
+
+notify :: MonadIO a => String -> String -> String -> a ()
+notify title icon text =
+  spawn $ printf "notify-send '%s' '%s' --icon=%s" title text icon
+
+xmonadNotify :: MonadIO a => String -> a ()
+xmonadNotify = notify "xmonad" "xmonad"
 
 myFocusedBorderColor :: String
 myFocusedBorderColor = "#afdedc"
@@ -59,7 +73,8 @@ myKeys conf@(XConfig { XMonad.modMask = modM }) =
        , ((modM, xK_w)              , kill)
        , ((modM .|. shiftMask, xK_q), io exitSuccess)
        , ( (modM, xK_q)
-         , spawn "pkill xmobar;xmonad --recompile && xmonad --restart"
+         , xmonadNotify "Recompiled"
+           >> spawn "pkill xmobar;xmonad --recompile && xmonad --restart"
          )
        -- Utilities
        , ((modM, xK_b), spawn myBrowser)
@@ -80,6 +95,12 @@ myKeys conf@(XConfig { XMonad.modMask = modM }) =
        , ((modM, xK_j), windows W.focusDown)
        , ( (modM, xK_k)
          , windows W.focusUp
+         )
+       -- Audio
+       , ((noModMask, xF86XK_AudioLowerVolume), myAudioControl "down")
+       , ((noModMask, xF86XK_AudioRaiseVolume), myAudioControl "up")
+       , ( (noModMask, xF86XK_AudioMute)
+         , myAudioControl "togmute"
          )
 
        --move Windows between workspaces
