@@ -20,12 +20,20 @@ import           XMonad.Actions.CycleWS
 
 import           XMonad.Hooks.ManageDocks
 import           XMonad.Hooks.SetWMName
+-- for compatibility with polybars xworkspaces
 import           XMonad.Hooks.EwmhDesktops
 
 import           XMonad.Util.SpawnOnce
 
+-- control mpd
+import qualified Network.MPD                   as MPD
+
+-- Special KeySyms
 import           Graphics.X11.ExtraTypes.XF86
+
+-- utilities
 import           Text.Printf
+import           Control.Monad
 
 
 myTerminal :: String
@@ -43,16 +51,6 @@ myFileManager = "thunar"
 myNormalBorderColor :: String
 myNormalBorderColor = "#aaaaaa"
 
-myAudioControl :: String -> X ()
-myAudioControl =
-  spawn . ("~/.config/polybar/scripts/pulseaudio-control.sh " ++)
-
-notify :: MonadIO a => String -> String -> String -> a ()
-notify title icon text =
-  spawn $ printf "notify-send '%s' '%s' --icon=%s" title text icon
-
-xmonadNotify :: MonadIO a => String -> a ()
-xmonadNotify = notify "xmonad" "xmonad"
 
 myFocusedBorderColor :: String
 myFocusedBorderColor = "#afdedc"
@@ -156,12 +154,12 @@ myMouseBindings (XConfig { XMonad.modMask = modM }) = M.fromList
 --------------------------------------------------------------------------------
 
 myStartupHook :: X ()
-myStartupHook = do
+myStartupHook =
   spawnOnce "nitrogen --restore"
-  spawnOnce "launch_polybar"
-  spawnOnce "xfce4-power-manager"
-  spawnOnce "pgrep nextcloud || nextcloud"
-  setWMName "compiz"
+    >> spawnOnce "launch_polybar"
+    >> spawnOnce "xfce4-power-manager"
+    >> spawnOnce "pgrep nextcloud || nextcloud"
+    >> setWMName "compiz"
 
 --------------------------------------------------------------------------------
 
@@ -200,3 +198,19 @@ configModifiers = [ewmh, docks]
 main :: IO ()
 main = do
   xmonad $ fullscreenSupport $ (foldl1 (.) configModifiers) $ myConfig
+
+-- UTILITIES
+--------------------------------------------------------------------------------
+-- pulseaudio
+myAudioControl :: String -> X ()
+myAudioControl =
+  spawn . ("~/.config/polybar/scripts/pulseaudio-control.sh " ++)
+
+-- Notifications
+notify :: MonadIO a => String -> String -> String -> a ()
+notify title icon text =
+  spawn $ printf "notify-send '%s' '%s' --icon=%s" title text icon
+
+xmonadNotify :: MonadIO a => String -> a ()
+xmonadNotify = notify "xmonad" "xmonad"
+
