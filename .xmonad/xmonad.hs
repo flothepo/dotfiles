@@ -100,7 +100,12 @@ myKeys conf@(XConfig { XMonad.modMask = modM }) =
        , ( (noModMask, xF86XK_AudioMute)
          , myAudioControl "togmute"
          )
-
+       -- mpd
+       , ((noModMask, xF86XK_AudioPlay), io $ void $ MPD.withMPD $ mpdToggle)
+       , ((noModMask, xF86XK_AudioPrev), io $ void $ MPD.withMPD MPD.previous)
+       , ( (noModMask, xF86XK_AudioNext)
+         , io $ void $ MPD.withMPD MPD.next
+         )
        --move Windows between workspaces
        , ( (modM .|. shiftMask, xK_Right)
          , shiftTo Next AnyWS >> moveTo Next AnyWS
@@ -214,3 +219,13 @@ notify title icon text =
 xmonadNotify :: MonadIO a => String -> a ()
 xmonadNotify = notify "xmonad" "xmonad"
 
+-- mpd
+
+-- Toggle play/pause
+mpdToggle :: MPD.MonadMPD m => m ()
+mpdToggle = do
+  s <- MPD.stState <$> MPD.status
+  MPD.pause $ b s
+ where
+  b MPD.Playing = True
+  b _           = False
