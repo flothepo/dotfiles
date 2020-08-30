@@ -1,0 +1,21 @@
+name: xmonad-flothepo
+synopsis: xmonad config
+author: flothepo
+
+dependencies:
+  - X11
+  - base
+  - xmonad
+  - xmonad-contrib
+  - containers
+  - libmpd
+
+executables:
+  xmonad:
+    main: xmonad.hs
+    ghc-options:
+      - -Wall
+      - -fwarn-tabs
+      - -threaded
+      - -O2
+      - -with-rtsopts=-N4
