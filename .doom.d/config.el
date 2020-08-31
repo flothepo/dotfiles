@@ -27,6 +27,24 @@
 (define-key prog-mode-map (kbd "C-c f")
   'format-buffer)
 
+(map! :leader
+      :desc "Raise popup"
+      "w m p" #'+popup/raise)
+
+;; Haskell
+(map! :map haskell-mode-map
+      :localleader
+      (:prefix-map ("l" . "lookup on hoogle")
+       :desc "lookup word" "w" #'hoogle-word-under-caret
+       :desc "lookup region" "r" #'hoogle-region)
+      (:prefix-map ("r" . "run haskell process")
+       :desc "load file" "r" #'haskell-process-load-file)
+      :desc "switch to repl" "s" #'haskell-interactive-switch)
+
+(map! :map interactive-haskell-mode-map
+      :localleader
+      :desc "switch to code" "s" #'haskell-interactive-switch-back)
+
 ;; org
 (add-hook! org-mode
   (lambda ()
@@ -83,6 +101,21 @@
       haskell-process-path-stack "stack"
       haskell-process-args-stack-ghci '("--ghci-options=-ferror-spans"))
 
+(setq haskell-interactive-popup-errors nil)
+
+(defun hoogle-word-under-caret ()
+  "Lookup the word under the caret on hoogle"
+  (interactive)
+  (save-excursion
+    (forward-word)
+    (let ((end (point)))
+      (backward-word)
+      (hoogle-region (point) end))))
+
+(defun hoogle-region (start end)
+  "Lookup the region between start and end on hoogle"
+  (interactive "r")
+  (haskell-hoogle (buffer-substring start end)))
 
 ;;; Utilities -------------------------------------------
 (defun format-buffer ()
