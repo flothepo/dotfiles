@@ -13,9 +13,13 @@ dependencies:
 executables:
   xmonad:
     main: xmonad.hs
+    source-dirs:
+      - ./
+      - lib
     ghc-options:
       - -Wall
       - -fwarn-tabs
+      - -fno-warn-missing-signatures
       - -threaded
       - -O2
       - -with-rtsopts=-N4

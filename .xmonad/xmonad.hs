@@ -31,8 +31,9 @@ import qualified Network.MPD                   as MPD
 import           Graphics.X11.ExtraTypes.XF86
 
 -- utilities
-import           Text.Printf
 import           Control.Monad
+import           Notify
+import qualified PulseAudio                    as PA
 
 
 myTerminal :: String
@@ -97,10 +98,10 @@ myKeys conf@(XConfig { XMonad.modMask = modM }) =
          , windows W.focusUp
          )
        -- Audio
-       , ((noModMask, xF86XK_AudioLowerVolume), myAudioControl "down")
-       , ((noModMask, xF86XK_AudioRaiseVolume), myAudioControl "up")
+       , ((noModMask, xF86XK_AudioLowerVolume), PA.changeVolume PA.Down)
+       , ((noModMask, xF86XK_AudioRaiseVolume), PA.changeVolume PA.Up)
        , ( (noModMask, xF86XK_AudioMute)
-         , myAudioControl "togmute"
+         , PA.toggleMute
          )
        -- mpd
        , ((noModMask, xF86XK_AudioPlay), io $ void $ MPD.withMPD mpdToggle)
@@ -213,19 +214,6 @@ restartXmonad :: X ()
 restartXmonad = do
   status <- recompile True
   let statusMessage = if status then "successful" else "failed"
-
--- pulseaudio
-myAudioControl :: String -> X ()
-myAudioControl =
-  spawn . ("~/.config/polybar/scripts/pulseaudio-control.sh " ++)
-
--- Notifications
-notify :: MonadIO a => String -> String -> String -> a ()
-notify title icon text =
-  spawn $ printf "notify-send '%s' '%s' --icon=%s" title text icon
-
-xmonadNotify :: MonadIO a => String -> a ()
-xmonadNotify = notify "xmonad" "xmonad"
   notify $ "Recompilation " ++ statusMessage
   when status $ restart "xmonad" True
 
