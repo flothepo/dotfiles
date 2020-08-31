@@ -8,7 +8,6 @@ import           System.Exit
 import           XMonad
 import qualified Data.Map                      as M
 import           XMonad.Config.Desktop
-import           XMonad.Hooks.ManageHelpers
 import           XMonad.Layout.ToggleLayouts
 import qualified XMonad.StackSet               as W
 
@@ -104,7 +103,7 @@ myKeys conf@(XConfig { XMonad.modMask = modM }) =
          , myAudioControl "togmute"
          )
        -- mpd
-       , ((noModMask, xF86XK_AudioPlay), io $ void $ MPD.withMPD $ mpdToggle)
+       , ((noModMask, xF86XK_AudioPlay), io $ void $ MPD.withMPD mpdToggle)
        , ((noModMask, xF86XK_AudioPrev), io $ void $ MPD.withMPD MPD.previous)
        , ( (noModMask, xF86XK_AudioNext)
          , io $ void $ MPD.withMPD MPD.next
@@ -143,20 +142,20 @@ myKeys conf@(XConfig { XMonad.modMask = modM }) =
        ]
 
 --------------------------------------------------------------------------------
-myMouseBindings (XConfig { XMonad.modMask = modM }) = M.fromList
+myMouseBindings XConfig { XMonad.modMask = modM } = M.fromList
   --Set the window to floating mode and move by dragging
   [ ( (modM, button1)
-    , (\w -> focus w >> mouseMoveWindow w >> windows W.shiftMaster)
+    , \w -> focus w >> mouseMoveWindow w >> windows W.shiftMaster
     )
 
     --Raise the window to the top of the stack
   , ( (modM, button2)
-    , (\w -> focus w >> windows W.shiftMaster)
+    , \w -> focus w >> windows W.shiftMaster
     )
 
     --Set the window to floating mode and resize by dragging
   , ( (modM, button3)
-    , (\w -> focus w >> mouseResizeWindow w >> windows W.shiftMaster)
+    , \w -> focus w >> mouseResizeWindow w >> windows W.shiftMaster
     )
   ]
 --------------------------------------------------------------------------------
@@ -196,16 +195,17 @@ myConfig = desktopConfig { modMask            = myModMask
                          , manageHook         = myManageHook
                          , keys               = myKeys
                          , workspaces         = myWorkspaces
+                         , mouseBindings      = myMouseBindings
                          }
 
-configModifiers :: [(XConfig a -> XConfig a)]
+configModifiers :: [XConfig a -> XConfig a]
 configModifiers = [ewmh, docks]
 --------------------------------------------------------------------------------
 
 
 main :: IO ()
 main = do
-  xmonad $ fullscreenSupport $ (foldl1 (.) configModifiers) $ myConfig
+  xmonad $ fullscreenSupport $ foldl1 (.) configModifiers myConfig
 
 -- UTILITIES
 --------------------------------------------------------------------------------
@@ -213,8 +213,6 @@ restartXmonad :: X ()
 restartXmonad = do
   status <- recompile True
   let statusMessage = if status then "successful" else "failed"
-  xmonadNotify $ "Recompilation " ++ statusMessage
-  if status then restart "xmonad" True else return ()
 
 -- pulseaudio
 myAudioControl :: String -> X ()
@@ -228,6 +226,8 @@ notify title icon text =
 
 xmonadNotify :: MonadIO a => String -> a ()
 xmonadNotify = notify "xmonad" "xmonad"
+  notify $ "Recompilation " ++ statusMessage
+  when status $ restart "xmonad" True
 
 -- mpd
 
