@@ -71,8 +71,7 @@ myKeys conf@(XConfig { XMonad.modMask = modM }) =
        , ((modM, xK_w)              , kill)
        , ((modM .|. shiftMask, xK_q), io exitSuccess)
        , ( (modM, xK_q)
-         , xmonadNotify "Recompiled"
-           >> spawn "pkill xmobar;xmonad --recompile && xmonad --restart"
+         , restartXmonad
          )
          -- C-M-l to send system to sleep
        , ( (controlMask .|. mod1Mask, xK_l)
@@ -210,6 +209,13 @@ main = do
 
 -- UTILITIES
 --------------------------------------------------------------------------------
+restartXmonad :: X ()
+restartXmonad = do
+  status <- recompile True
+  let statusMessage = if status then "successful" else "failed"
+  xmonadNotify $ "Recompilation " ++ statusMessage
+  if status then restart "xmonad" True else return ()
+
 -- pulseaudio
 myAudioControl :: String -> X ()
 myAudioControl =
