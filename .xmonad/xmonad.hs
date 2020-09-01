@@ -180,8 +180,9 @@ myLayoutHook =
 --------------------------------------------------------------------------------
 myManageHook = composeAll
   [ className =? "KeePassXC" --> doFloat
-  , className =? "firefox" <&&> resource =? "Toolkit" --> doFloat
+  , className =? "firefox" <&&> appName =? "Toolkit" --> doFloat
   , className =? "matplotlib" --> doFloat
+  , title =? "Microsoft Teams Notification" --> doFloat
   ]
 --------------------------------------------------------------------------------
 
