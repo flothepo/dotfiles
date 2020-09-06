@@ -32,8 +32,8 @@ import           Graphics.X11.ExtraTypes.XF86
 
 -- utilities
 import           Control.Monad
-import           Notify
-import qualified PulseAudio                    as PA
+import           Text.Printf
+import           Data.Maybe                     ( maybeToList )
 
 
 myTerminal :: String
@@ -98,10 +98,10 @@ myKeys conf@(XConfig { XMonad.modMask = modM }) =
          , windows W.focusUp
          )
        -- Audio
-       , ((noModMask, xF86XK_AudioLowerVolume), PA.changeVolume PA.Down)
-       , ((noModMask, xF86XK_AudioRaiseVolume), PA.changeVolume PA.Up)
+       , ((noModMask, xF86XK_AudioLowerVolume), changeVolume Down)
+       , ((noModMask, xF86XK_AudioRaiseVolume), changeVolume Up)
        , ( (noModMask, xF86XK_AudioMute)
-         , PA.toggleMute
+         , toggleMute
          )
        -- mpd
        , ((noModMask, xF86XK_AudioPlay), io $ void $ MPD.withMPD mpdToggle)
@@ -228,3 +228,57 @@ mpdToggle = do
  where
   b MPD.Playing = True
   b _           = False
+
+
+-- Notifications
+notify' :: MonadIO a => String -> String -> String -> a ()
+notify' nTitle icon text =
+  spawn $ printf "notify-send -t 1000 '%s' '%s' --icon=%s" nTitle text icon
+
+notify :: MonadIO a => String -> a ()
+notify = notify' "xmonad" "xmonad"
+
+
+-- Fullscreen when Application requests it (firefox video)
+addNETSupported :: Atom -> X ()
+addNETSupported x = withDisplay $ \dpy -> do
+  r               <- asks theRoot
+  a_NET_SUPPORTED <- getAtom "_NET_SUPPORTED"
+  a               <- getAtom "ATOM"
+  liftIO $ do
+    sup <- (join . maybeToList) <$> getWindowProperty32 dpy a_NET_SUPPORTED r
+    when (fromIntegral x `notElem` sup) $ changeProperty32 dpy
+                                                           r
+                                                           a_NET_SUPPORTED
+                                                           a
+                                                           propModeAppend
+                                                           [fromIntegral x]
+
+addEWMHFullscreen :: X ()
+addEWMHFullscreen = do
+  wms <- getAtom "_NET_WM_STATE"
+  wfs <- getAtom "_NET_WM_STATE_FULLSCREEN"
+  mapM_ addNETSupported [wms, wfs]
+
+-- Pulseaudio
+data VolumeChange = Up | Down
+
+instance Show VolumeChange where
+  show Up   = "+2%"
+  show Down = "-2%"
+
+defaultSink :: String
+defaultSink = "@DEFAULT_SINK@"
+
+volumeCmd :: String
+volumeCmd = "set-sink-volume"
+
+toggleMute :: MonadIO m => m ()
+toggleMute = pactl "set-sink-mute" defaultSink "toggle"
+
+changeVolume :: MonadIO m => VolumeChange -> m ()
+changeVolume = pactl volumeCmd defaultSink . show
+
+pactl :: MonadIO m => String -> String -> String -> m ()
+pactl cmd sink value = spawn $ printf "pactl %s %s %s" cmd sink value
+
