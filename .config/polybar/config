@@ -63,7 +63,7 @@ label-occupied-foreground = ${colors.foreground}
 label-occupied-underline = ${colors.primary-dark}
 
 label-urgent = %name%
-label-urgent-foreground = ${colors.alert}
+label-urgent-foreground = ${colors.foreground}
 label-urgent-background = ${colors.alert}
 
 label-empty = %name%
