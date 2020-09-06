@@ -14,13 +14,19 @@ import qualified XMonad.StackSet               as W
 -- Gaps between windows
 import           XMonad.Layout.Spacing
 import           XMonad.Layout.Fullscreen
+import           XMonad.Layout.NoBorders
+
 
 import           XMonad.Actions.CycleWS
 
-import           XMonad.Hooks.ManageDocks
+import           XMonad.Hooks.ManageDocks       ( avoidStruts
+                                                , docks
+                                                )
 import           XMonad.Hooks.SetWMName
 -- for compatibility with polybars xworkspaces
 import           XMonad.Hooks.EwmhDesktops
+
+
 
 import           XMonad.Util.SpawnOnce
 
@@ -56,7 +62,8 @@ myFocusedBorderColor :: String
 myFocusedBorderColor = "#afdedc"
 
 myWorkspaces :: [String]
-myWorkspaces = ["\xf120", "\xe007", "\xf0e0", "\xf8d9"]
+-- [cli, browser, mail, work] ++ numbered
+myWorkspaces = ["\xf120", "\xe007", "\xf0e0", "\xf0b1"]
   ++ map (show :: Int -> String) [5 .. 9]
 
 --------------------------------------------------------------------------------
@@ -167,15 +174,17 @@ myStartupHook =
     >> spawnOnce "launch_polybar"
     >> spawnOnce "xfce4-power-manager"
     >> spawnOnce "pgrep nextcloud || nextcloud"
+    >> spawnOnce "nm-applet"
     >> setWMName "compiz"
+    >> addEWMHFullscreen
 
 --------------------------------------------------------------------------------
 
-myLayoutHook =
-  avoidStruts
-    $ spacingRaw True (Border 0 0 0 0) True (Border 4 4 4 4) True
-    $ toggleLayouts Full
-    $ layoutHook def
+myLayoutHook = avoidStruts $ toggleLayouts full tall
+ where
+  tall = gaps $ Tall 1 (3 / 100) (1 / 2)
+  full = noBorders $ fullscreenFull Full
+  gaps = spacingRaw True (Border 0 0 0 0) True (Border 4 4 4 4) True
 
 --------------------------------------------------------------------------------
 myManageHook = composeAll
