@@ -1,7 +1,7 @@
 /** Configured For Applets **/
 
 configuration {
-  modi: "drun,window,ssh,combi";
+  modi: "drun,window";
   show-icons:         true;
   icon-theme:         "ePapirus";
   theme: "sidetab";

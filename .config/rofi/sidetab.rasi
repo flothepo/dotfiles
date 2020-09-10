@@ -4,15 +4,15 @@
  */
 
 configuration {
-	display-drun:    "Activate";
-	display-run:     "Execute";
-	display-window:  "Window";
+    display-drun: " ";
+    display-window: " ";
 	show-icons:      true;
 	sidebar-mode:    true;
+    font: "Fira Sans 12";
 }
 
 * {
-	background-color:            #080808;
+	background-color:            #2E3440;
 	text-color:                  #d3d7cf;
 	selbg:                       #215d9c;
 	actbg:                       #262626;
