@@ -26,7 +26,7 @@ import           XMonad.Hooks.SetWMName
 -- for compatibility with polybars xworkspaces
 import           XMonad.Hooks.EwmhDesktops
 
-
+import           XMonad.Hooks.ManageHelpers
 
 import           XMonad.Util.SpawnOnce
 
@@ -52,7 +52,7 @@ myEditor :: String
 myEditor = "emacsclient -c"
 
 myFileManager :: String
-myFileManager = "thunar"
+myFileManager = "nautilus"
 
 myNormalBorderColor :: String
 myNormalBorderColor = "#aaaaaa"
@@ -94,6 +94,10 @@ myKeys conf@(XConfig { XMonad.modMask = modM }) =
        , ((modM, xK_space), spawn "rofi -show drun")
        , ( (modM .|. shiftMask, xK_e)
          , spawn "rofi -show emoji -modi emoji:rofimoji"
+         )
+       -- file manager
+       , ( (modM .|. shiftMask, xK_f)
+         , spawn myFileManager
          )
        --Screenshots
        , ( (noModMask, xK_Print)
@@ -172,9 +176,6 @@ myStartupHook :: X ()
 myStartupHook =
   spawnOnce "nitrogen --restore"
     >> spawnOnce "launch_polybar"
-    >> spawnOnce "xfce4-power-manager"
-    >> spawnOnce "pgrep nextcloud || nextcloud"
-    >> spawnOnce "nm-applet"
     >> setWMName "compiz"
     >> addEWMHFullscreen
 
@@ -192,6 +193,7 @@ myManageHook = composeAll
   , className =? "firefox" <&&> appName =? "Toolkit" --> doFloat
   , className =? "matplotlib" --> doFloat
   , title =? "Microsoft Teams Notification" --> doFloat
+  , className =? "Org.gnome.Nautilus" --> doCenterFloat
   ]
 --------------------------------------------------------------------------------
 
