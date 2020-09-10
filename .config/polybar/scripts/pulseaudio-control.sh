@@ -20,6 +20,7 @@ NOTIFICATIONS="yes"  # Notifications when switching sinks if enabled
 # the names of your active sinks, use `pactl list sinks short`.
 SINK_BLACKLIST=(
     "alsa_output.usb-SinkYouDontUse-00.analog-stereo"
+    "alsa_output.pci-0000_07_00.1.hdmi-stereo-extra1"
 )
 
 # Maps PulseAudio sink names to human-readable names
