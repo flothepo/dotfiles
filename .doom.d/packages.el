@@ -10,3 +10,4 @@
 (package! ox-twbs)
 (package! format-all)
 (package! fira-code-mode)
+(package! org-superstar)

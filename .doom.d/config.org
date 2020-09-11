@@ -1,0 +1,154 @@
+#+TITLE: doom emacs config
+#+AUTHOR: flothepo
+
+* Basic Configuration
+
+** Doom
+*** Theme and font
+#+begin_src emacs-lisp :tangle yes
+(setq doom-theme 'doom-palenight
+      doom-font (font-spec :family "Fira Code" :size 16)
+      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 12)
+      doom-big-font-mode nil
+      doom-big-font-increment 2)
+#+end_src
+
+Bold keywords
+#+begin_src emacs-lisp :tangle yes
+(set-face-attribute 'font-lock-keyword-face nil :weight 'bold)
+#+end_src
+Show unicode glyphs using all-the-icons font
+#+begin_src emacs-lisp :tangle yes
+(set-fontset-font t 'unicode "all-the-icons" nil 'prepend)
+#+end_src
+**** Fira Code
+Enable ligatures
+#+begin_src emacs-lisp :tangle yes
+(global-fira-code-mode)
+(setq fira-code-mode-disabled-ligatures '("x" "[]"))
+#+end_src
+**** pretty symbols
+unprettify prettified symbols when under cursor
+#+begin_src emacs-lisp :tangle yes
+(setq prettify-symbols-unprettify-at-point 'right-edge)
+#+end_src
+*** Misc
+#+begin_src emacs-lisp :tangle yes
+(setq custom-file (expand-file-name ".custom.el" doom-private-dir)
+      doom-fallback-buffer-name "► Doom")
+#+end_src
+Ask which buffer to open after a window split
+#+begin_src emacs-lisp :tangle yes
+(defadvice! prompt-for-buffer (&rest _)
+  :after '(evil-window-split evil-window-vsplit)
+  (+ivy/switch-buffer))
+#+end_src
+** Defaults
+#+begin_src emacs-lisp :tangle yes
+(setq-default
+ tab-width 4
+ uniquify-buffer-name-style 'forward
+ window-combination-resize t
+ x-stretch-cursor t)
+#+end_src
+#+begin_src emacs-lisp :tangle yes
+(setq
+ auto-save-default t
+ inhibit-compacting-font-caches t)
+#+end_src
+
+Use org-mode instead of Fundamental mode as default:
+#+begin_src emacs-lisp :tangle yes
+(setq-default major-mode 'org-mode)
+#+end_src
+** Basic modes
+*** org
+Visual stuff
+#+begin_src emacs-lisp :tangle yes
+(after! org
+  (setq org-pretty-entities nil
+        org-ellipsis  "⤵"))
+
+(add-hook! org-mode
+           (org-bullets-mode t))
+#+end_src
+*** ivy
+better matching
+#+begin_src emacs-lisp :tangle yes
+(setq ivy-re-builders-alist
+      '((t . ivy--regex-plus)))
+#+end_src
+*** treemacs
+Do not show files ignored by git
+#+begin_src emacs-lisp :tangle yes
+(after! treemacs
+  (add-to-list 'treemacs-pre-file-insert-predicates #'treemacs-is-file-git-ignored?))
+#+end_src
+*** company
+#+begin_src emacs-lisp :tangle yes
+(setq company-tooltip-idle-delay 0.2
+      company-idle-delay 0.2
+      company-show-numbers t)
+#+end_src
+*** recentf
+#+begin_src emacs-lisp :tangle yes
+(after! recentf
+  (add-to-list 'recentf-exclude
+               (expand-file-name "~/.emacs.d//")))
+#+end_src
+** Language Configuration
+*** Haskell
+Use stack everywhere
+#+begin_src emacs-lisp :tangle yes
+(setq haskell-process-type 'stack-ghci
+      haskell-process-path-stack "stack"
+      haskell-process-args-stack-ghci '("--ghci-options=-ferror-spans"))
+#+end_src
+No annoying popups
+#+begin_src emacs-lisp :tangle yes
+(setq haskell-interactive-popup-errors nil)
+#+end_src
+**** hoogle
+Some utility functions for interacting with hoogle
+#+begin_src emacs-lisp :tangle yes
+(defun hoogle-word-under-caret ()
+  "Lookup the word under the caret on hoogle"
+  (interactive)
+  (save-excursion
+    (forward-word)
+    (let ((end (point)))
+      (backward-word)
+      (hoogle-region (point) end))))
+
+(defun hoogle-region (start end)
+  "Lookup the region between start and end on hoogle"
+  (interactive "r")
+  (haskell-hoogle (buffer-substring start end)))
+#+end_src
+** Keybindings
+*** General
+Make it easy to raise popups to be proper windows
+#+begin_src emacs-lisp :tangle yes
+(map! :leader
+      :desc "Raise popup"
+      "w m p" #'+popup/raise)
+#+end_src
+*** evil
+#+begin_src emacs-lisp :tangle yes
+(setq +evil-want-o/O-to-continue-comments nil)
+#+end_src
+*** Haskell
+#+begin_src emacs-lisp :tangle yes
+(map! :map haskell-mode-map
+      :localleader
+      (:prefix-map ("l" . "lookup on hoogle")
+       :desc "lookup word" "w" #'hoogle-word-under-caret
+       :desc "lookup region" "r" #'hoogle-region)
+      (:prefix-map ("r" . "run haskell process")
+       :desc "load file" "r" #'haskell-process-load-file)
+      :desc "switch to repl" "s" #'haskell-interactive-switch)
+
+(map! :map interactive-haskell-mode-map
+      :localleader
+      :desc "switch to code" "s" #'haskell-interactive-switch-back)
+#+end_src
