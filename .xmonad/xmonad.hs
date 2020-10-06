@@ -80,7 +80,11 @@ myKeys conf@(XConfig { XMonad.modMask = modM }) =
        , ( (modM, xK_q)
          , restartXmonad
          )
-         -- C-M-l to send system to sleep
+       -- powermenu
+       , ( (modM, xK_Escape)
+         , spawn "rofi -show powermenu -modi powermenu:rofi-powermenu"
+         )
+       -- C-M-l to send system to sleep
        , ( (controlMask .|. mod1Mask, xK_l)
          , spawn "systemctl suspend"
          )
