@@ -10,14 +10,18 @@
       doom-font (font-spec :family "Fira Code" :size 16)
       doom-variable-pitch-font (font-spec :family "Fira Sans" :size 12)
       doom-big-font-mode nil
-      doom-big-font-increment 2)
+      doom-big-font-increment 2
+      doom-themes-treemacs-theme "doom-colors")
 #+end_src
 
 Bold keywords
 #+begin_src emacs-lisp :tangle yes
-(set-face-attribute 'font-lock-keyword-face nil :weight 'bold)
+(defun my-theme-customizations ()
+ (set-face-attribute 'font-lock-keyword-face nil :weight 'bold))
+
+(add-hook! 'doom-load-theme-hook #'my-theme-customizations)
 #+end_src
-Show unicode glyphs using all-the-icons font
+Show Unicode glyphs using all-the-icons font
 #+begin_src emacs-lisp :tangle yes
 (set-fontset-font t 'unicode "all-the-icons" nil 'prepend)
 #+end_src
@@ -31,6 +35,10 @@ Enable ligatures
 unprettify prettified symbols when under cursor
 #+begin_src emacs-lisp :tangle yes
 (setq prettify-symbols-unprettify-at-point 'right-edge)
+#+end_src
+**** modeline
+#+begin_src emacs-lisp :tangle yes
+(setq doom-modeline-major-mode-icon t)
 #+end_src
 *** Misc
 #+begin_src emacs-lisp :tangle yes
@@ -57,32 +65,11 @@ Ask which buffer to open after a window split
  inhibit-compacting-font-caches t)
 #+end_src
 
-Use org-mode instead of Fundamental mode as default:
-#+begin_src emacs-lisp :tangle yes
-(setq-default major-mode 'org-mode)
-#+end_src
 ** Basic modes
-*** org
-Visual stuff
+*** calendar
 #+begin_src emacs-lisp :tangle yes
-(after! org
-  (setq org-pretty-entities nil
-        org-ellipsis  "⤵"))
-
-(add-hook! org-mode
-           (org-bullets-mode t))
-#+end_src
-*** ivy
-better matching
-#+begin_src emacs-lisp :tangle yes
-(setq ivy-re-builders-alist
-      '((t . ivy--regex-plus)))
-#+end_src
-*** treemacs
-Do not show files ignored by git
-#+begin_src emacs-lisp :tangle yes
-(after! treemacs
-  (add-to-list 'treemacs-pre-file-insert-predicates #'treemacs-is-file-git-ignored?))
+(setq calendar-week-start-day 1
+      display-time-24hr-format t)
 #+end_src
 *** company
 #+begin_src emacs-lisp :tangle yes
@@ -90,11 +77,41 @@ Do not show files ignored by git
       company-idle-delay 0.2
       company-show-numbers t)
 #+end_src
+*** flyspell
+Use hunspell
+#+begin_src emacs-lisp :tangle yes
+(setq ispell-program-name (executable-find "hunspell")
+      ispell-dictionary "german")
+(add-hook! org-mode #'flyspell-mode)
+#+end_src
+
+*** ivy
+better matching
+#+begin_src emacs-lisp :tangle yes
+(setq ivy-re-builders-alist
+      '((t . ivy--regex-plus)))
+#+end_src
+*** org
+Visual stuff
+#+begin_src emacs-lisp :tangle yes
+(after! org
+  (setq org-pretty-entities nil
+        org-ellipsis  "▼"))
+
+(add-hook! org-mode #'org-superstar-mode)
+(setq org-superstar-prettify-item-bullets nil)
+#+end_src
 *** recentf
 #+begin_src emacs-lisp :tangle yes
 (after! recentf
   (add-to-list 'recentf-exclude
                (expand-file-name "~/.emacs.d//")))
+#+end_src
+*** treemacs
+Do not show files ignored by git
+#+begin_src emacs-lisp :tangle yes
+(after! treemacs
+  (add-to-list 'treemacs-pre-file-insert-predicates #'treemacs-is-file-git-ignored?))
 #+end_src
 ** Language Configuration
 *** Haskell
@@ -132,6 +149,19 @@ Make it easy to raise popups to be proper windows
 (map! :leader
       :desc "Raise popup"
       "w m p" #'+popup/raise)
+#+end_src
+Wrap in parens
+#+begin_src emacs-lisp :tangle yes
+(map! :leader
+      (:prefix "i"
+       :desc "Wrap round"  "(" #'sp-wrap-round
+       :desc "Wrap curly"  "{" #'sp-wrap-curly
+       :desc "Wrap square" "[" #'sp-wrap-square))
+#+end_src
+[[flyspell]] in ivy
+#+begin_src emacs-lisp :tangle yes
+(map! :map flyspell-mode-map
+      "C-;" #'flyspell-correct-wrapper)
 #+end_src
 *** evil
 #+begin_src emacs-lisp :tangle yes
