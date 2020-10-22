@@ -1,4 +1,3 @@
-
 export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="bureau"
 
@@ -53,3 +52,18 @@ function man() {
     LESS_TERMCAP_us=$'\e[01;32m' \
     command man "$@"
 }
+
+function edit() {
+	emacsclient -cn $1
+}
+
+function dusage(){
+  d=*(D)
+  if [ "$@" ]; then
+     d="$@"
+  fi
+  du -hs *(D) | sort -h
+}
+
+# opam configuration
+test -r /home/flo/.opam/opam-init/init.zsh && . /home/flo/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true
