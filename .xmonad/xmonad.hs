@@ -1,13 +1,10 @@
-module Main
-  ( main
-  )
-where
+{-# OPTIONS_GHC -fno-warn-missing-signatures #-}
 
---------------------------------------------------------------------------------
-import           System.Exit
+import           System.Exit                    ( exitSuccess )
+import           System.Environment             ( getProgName )
 import           XMonad
 import qualified Data.Map                      as M
-import           XMonad.Config.Desktop
+import           XMonad.Config.Desktop          ( desktopConfig )
 import           XMonad.Layout.ToggleLayouts
 import qualified XMonad.StackSet               as W
 
@@ -26,9 +23,9 @@ import           XMonad.Hooks.SetWMName
 -- for compatibility with polybars xworkspaces
 import           XMonad.Hooks.EwmhDesktops
 
-import           XMonad.Hooks.ManageHelpers
+import           XMonad.Hooks.ManageHelpers     ( doCenterFloat )
 
-import           XMonad.Util.SpawnOnce
+import           XMonad.Util.SpawnOnce          ( spawnOnce )
 
 -- control mpd
 import qualified Network.MPD                   as MPD
@@ -37,8 +34,11 @@ import qualified Network.MPD                   as MPD
 import           Graphics.X11.ExtraTypes.XF86
 
 -- utilities
-import           Control.Monad
-import           Text.Printf
+import           Control.Monad                  ( void
+                                                , when
+                                                , join
+                                                )
+import           Text.Printf                    ( printf )
 import           Data.Maybe                     ( maybeToList )
 
 
@@ -63,8 +63,8 @@ myFocusedBorderColor = "#afdedc"
 
 myWorkspaces :: [String]
 -- [cli, browser, mail, work] ++ numbered
-myWorkspaces = ["\xf120", "\xe007", "\xf0e0", "\xf0b1"]
-  ++ map (show :: Int -> String) [5 .. 9]
+myWorkspaces = ["\xf120", "\xe007", "\xf086", "\xf0b1", "\xf11b"]
+  ++ map (show :: Int -> String) [6 .. 9]
 
 --------------------------------------------------------------------------------
 
@@ -158,6 +158,7 @@ myKeys conf@(XConfig { XMonad.modMask = modM }) =
        ]
 
 --------------------------------------------------------------------------------
+myMouseBindings :: XConfig Layout -> M.Map (ButtonMask, Button) (Window -> X ())
 myMouseBindings XConfig { XMonad.modMask = modM } = M.fromList
   --Set the window to floating mode and move by dragging
   [ ( (modM, button1)
@@ -178,10 +179,13 @@ myMouseBindings XConfig { XMonad.modMask = modM } = M.fromList
 
 myStartupHook :: X ()
 myStartupHook =
-  spawnOnce "nitrogen --restore"
-    >> spawnOnce "launch_polybar"
-    >> setWMName "compiz"
-    >> addEWMHFullscreen
+  mapM_ spawnOnce autostarts >> setWMName "compiz" >> addEWMHFullscreen
+ where
+  autostarts =
+    [ "launch-polybar"          -- launch polybar on all monitors
+    , "nitrogen --restore"      -- reload wallpaper
+    , "picom"                   -- compositor
+    ]
 
 --------------------------------------------------------------------------------
 
@@ -198,6 +202,9 @@ myManageHook = composeAll
   , className =? "matplotlib" --> doFloat
   , title =? "Microsoft Teams Notification" --> doFloat
   , className =? "Org.gnome.Nautilus" --> doCenterFloat
+  , className =? "Gcr-prompter" <&&> title =? "Unlock Keyring" --> doCenterFloat
+  , className =? "Pavucontrol" --> doCenterFloat
+  , className =? "Evolution-alarm-notify" --> doFloat
   ]
 --------------------------------------------------------------------------------
 
@@ -231,7 +238,8 @@ restartXmonad = do
   status <- recompile True
   let statusMessage = if status then "successful" else "failed"
   notify $ "Recompilation " ++ statusMessage
-  when status $ restart "xmonad" True
+  whoami <- liftIO getProgName
+  when status $ restart whoami True
 
 -- mpd
 
