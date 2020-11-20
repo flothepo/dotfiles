@@ -6,12 +6,26 @@
 ** Doom
 *** Theme and font
 #+begin_src emacs-lisp :tangle yes
-(setq doom-theme 'doom-palenight
+(setq doom-theme 'doom-vibrant
       doom-font (font-spec :family "Fira Code" :size 16)
       doom-variable-pitch-font (font-spec :family "Fira Sans" :size 12)
       doom-big-font-mode nil
       doom-big-font-increment 2
       doom-themes-treemacs-theme "doom-colors")
+
+(defvar my/themes
+  (let ((themes '(doom-palenight
+                  doom-opera-light
+                  doom-vibrant)))
+    (nconc themes themes)
+    themes))
+
+(defun my/cycle-theme ()
+  (interactive)
+  (setq doom-theme (car my/themes)
+        my/themes (cdr my/themes))
+  (doom/reload-theme)
+  (message "Loaded theme %s" (symbol-name doom-theme)))
 #+end_src
 
 Bold keywords
@@ -163,6 +177,13 @@ Wrap in parens
 (map! :map flyspell-mode-map
       "C-;" #'flyspell-correct-wrapper)
 #+end_src
+Cycle doom themes
+#+begin_src emacs-lisp :tangle yes
+(map! :leader
+      :desc "Cycle doom theme"
+      "t t" #'my/cycle-theme)
+#+end_src
+
 *** evil
 #+begin_src emacs-lisp :tangle yes
 (setq +evil-want-o/O-to-continue-comments nil)
