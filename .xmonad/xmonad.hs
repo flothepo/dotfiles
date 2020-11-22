@@ -23,7 +23,9 @@ import           XMonad.Hooks.SetWMName
 -- for compatibility with polybars xworkspaces
 import           XMonad.Hooks.EwmhDesktops
 
-import           XMonad.Hooks.ManageHelpers     ( doCenterFloat )
+import           XMonad.Hooks.ManageHelpers     ( doCenterFloat
+                                                , doFullFloat
+                                                )
 
 import           XMonad.Util.SpawnOnce          ( spawnOnce )
 
@@ -205,6 +207,7 @@ myManageHook = composeAll
   , className =? "Gcr-prompter" <&&> title =? "Unlock Keyring" --> doCenterFloat
   , className =? "Pavucontrol" --> doCenterFloat
   , className =? "Evolution-alarm-notify" --> doFloat
+  , className =? "kdeconnect.daemon" --> doFullFloat
   ]
 --------------------------------------------------------------------------------
 
