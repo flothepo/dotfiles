@@ -40,6 +40,7 @@ import           Control.Monad                  ( void
                                                 , when
                                                 , join
                                                 )
+import           Control.Arrow                  ( (>>>) )
 import           Text.Printf                    ( printf )
 import           Data.Maybe                     ( maybeToList )
 
@@ -191,11 +192,11 @@ myStartupHook =
 
 --------------------------------------------------------------------------------
 
-myLayoutHook = avoidStruts $ toggleLayouts full tall
+myLayoutHook = hooks tiled
  where
-  tall = gaps $ Tall 1 (3 / 100) (1 / 2)
-  full = noBorders $ fullscreenFull Full
-  gaps = spacingRaw True (Border 0 0 0 0) True (Border 4 4 4 4) True
+  hooks = toggleLayouts Full >>> lessBorders Screen >>> avoidStruts
+  tiled = gaps $ Tall 1 (3 / 100) (1 / 2)
+  gaps  = spacingRaw True (Border 0 0 0 0) True (Border 4 4 4 4) True
 
 --------------------------------------------------------------------------------
 myManageHook = composeAll
