@@ -186,7 +186,6 @@ myStartupHook =
  where
   autostarts =
     [ "launch-polybar"          -- launch polybar on all monitors
-    , "nitrogen --restore"      -- reload wallpaper
     , "picom"                   -- compositor
     ]
 
@@ -226,14 +225,12 @@ myConfig = desktopConfig { modMask            = myModMask
                          , mouseBindings      = myMouseBindings
                          }
 
-configModifiers :: [XConfig a -> XConfig a]
-configModifiers = [ewmh, docks]
 --------------------------------------------------------------------------------
-
 
 main :: IO ()
 main = do
-  xmonad $ fullscreenSupport $ foldl1 (.) configModifiers myConfig
+  xmonad (configModifiers myConfig)
+  where configModifiers = fullscreenSupport . ewmh . docks
 
 -- UTILITIES
 --------------------------------------------------------------------------------
