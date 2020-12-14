@@ -12,6 +12,7 @@ import qualified XMonad.StackSet               as W
 import           XMonad.Layout.Spacing
 import           XMonad.Layout.Fullscreen
 import           XMonad.Layout.NoBorders
+import           XMonad.Layout.Tabbed
 
 
 import           XMonad.Actions.CycleWS
@@ -143,8 +144,9 @@ myKeys conf@(XConfig { XMonad.modMask = modM }) =
          , withFocused $ windows . W.sink
          )
        --  Toggle Fullscreening of window
-       , ( (modM, xK_f)
-         , sendMessage ToggleLayout
+       , ((modM, xK_f), sendMessage ToggleLayout)
+       , ( (modM, xK_period)
+         , sendMessage NextLayout
          )
        --Resize the master window
        , ((modM, xK_h), sendMessage Shrink)
@@ -191,11 +193,27 @@ myStartupHook =
 
 --------------------------------------------------------------------------------
 
-myLayoutHook = hooks tiled
+myLayoutHook = hooks layout
  where
-  hooks = toggleLayouts Full >>> lessBorders Screen >>> avoidStruts
-  tiled = gaps $ Tall 1 (3 / 100) (1 / 2)
+  hooks = toggleLayouts Full
+    >>> lessBorders (Combine Union Screen OnlyLayoutFloatBelow)
+      -- >>> avoidStruts
+  layout =
+    avoidStruts $ gaps (Tall 1 (3 / 100) (1 / 2) ||| tabbed shrinkText theme)
   gaps  = spacingRaw True (Border 0 0 0 0) True (Border 4 4 4 4) True
+  theme = def { fontName            = "xft:Fira Sans:size=11"
+              , activeColor         = "#81A1C1"
+              , activeBorderColor   = "#81A1C1"
+              , activeTextColor     = "#3B4252"
+              , activeBorderWidth   = 1
+              , inactiveColor       = "#3B4252"
+              , inactiveBorderColor = "#3B4252"
+              , inactiveTextColor   = "#ECEFF4"
+              , inactiveBorderWidth = 1
+              , urgentColor         = "#BF616A"
+              , urgentBorderColor   = "#BF616A"
+              , urgentBorderWidth   = 1
+              }
 
 --------------------------------------------------------------------------------
 myManageHook = composeAll
