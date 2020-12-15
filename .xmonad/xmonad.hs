@@ -1,28 +1,28 @@
 {-# OPTIONS_GHC -fno-warn-missing-signatures #-}
 
-import           System.Exit                    ( exitSuccess )
-import           System.Environment             ( getProgName )
-import           XMonad
 import qualified Data.Map                      as M
+import           System.Environment             ( getProgName )
+import           System.Exit                    ( exitSuccess )
+import           XMonad
 import           XMonad.Config.Desktop          ( desktopConfig )
 import           XMonad.Layout.ToggleLayouts
 import qualified XMonad.StackSet               as W
 
--- Gaps between windows
-import           XMonad.Layout.Spacing
 import           XMonad.Layout.Fullscreen
 import           XMonad.Layout.NoBorders
+-- Gaps between windows
+import           XMonad.Layout.Spacing
 import           XMonad.Layout.Tabbed
 
 
 import           XMonad.Actions.CycleWS
 
+-- for compatibility with polybars xworkspaces
+import           XMonad.Hooks.EwmhDesktops
 import           XMonad.Hooks.ManageDocks       ( avoidStruts
                                                 , docks
                                                 )
 import           XMonad.Hooks.SetWMName
--- for compatibility with polybars xworkspaces
-import           XMonad.Hooks.EwmhDesktops
 
 import           XMonad.Hooks.ManageHelpers     ( doCenterFloat
                                                 , doFullFloat
@@ -36,14 +36,14 @@ import qualified Network.MPD                   as MPD
 -- Special KeySyms
 import           Graphics.X11.ExtraTypes.XF86
 
--- utilities
-import           Control.Monad                  ( void
-                                                , when
-                                                , join
-                                                )
 import           Control.Arrow                  ( (>>>) )
-import           Text.Printf                    ( printf )
+-- utilities
+import           Control.Monad                  ( join
+                                                , void
+                                                , when
+                                                )
 import           Data.Maybe                     ( maybeToList )
+import           Text.Printf                    ( printf )
 
 
 myTerminal :: String
@@ -76,94 +76,71 @@ myModMask :: KeyMask
 myModMask = mod4Mask
 
 myKeys :: XConfig l -> M.Map (KeyMask, KeySym) (X ())
-myKeys conf@(XConfig { XMonad.modMask = modM }) =
+myKeys conf@XConfig { XMonad.modMask = modM } =
   M.fromList
-    $  [ ((modM, xK_Return)         , spawn myTerminal)
-       , ((modM, xK_w)              , kill)
-       , ((modM .|. shiftMask, xK_q), io exitSuccess)
-       , ( (modM, xK_q)
-         , restartXmonad
-         )
+    $ [ ((modM, xK_Return)         , spawn myTerminal)
+      , ((modM, xK_w)              , kill)
+      , ((modM .|. shiftMask, xK_q), io exitSuccess)
+      , ((modM, xK_q)              , restartXmonad)
        -- powermenu
-       , ( (modM, xK_Escape)
-         , spawn "rofi -show powermenu -modi powermenu:rofi-powermenu"
-         )
+      , ( (modM, xK_Escape)
+        , spawn "rofi -show powermenu -modi powermenu:rofi-powermenu"
+        )
        -- C-M-l to send system to sleep
-       , ( (controlMask .|. mod1Mask, xK_l)
-         , spawn "systemctl suspend"
-         )
+      , ((controlMask .|. mod1Mask, xK_l), spawn "systemctl suspend")
        -- Utilities
-       , ((modM, xK_b), spawn myBrowser)
-       , ((modM, xK_e), spawn myEditor)
-       , ( (modM, xK_t)
-         , spawn myFileManager
-         )
+      , ((modM, xK_b)                    , spawn myBrowser)
+      , ((modM, xK_e)                    , spawn myEditor)
+      , ((modM, xK_t)                    , spawn myFileManager)
        --rofi
-       , ((modM, xK_space), spawn "rofi -show drun")
-       , ( (modM .|. shiftMask, xK_e)
-         , spawn "rofi -show emoji -modi emoji:rofimoji"
-         )
+      , ((modM, xK_space)                , spawn "rofi -show drun")
+      , ( (modM .|. shiftMask, xK_e)
+        , spawn "rofi -show emoji -modi emoji:rofimoji"
+        )
        -- file manager
-       , ( (modM .|. shiftMask, xK_f)
-         , spawn myFileManager
-         )
+      , ((modM .|. shiftMask, xK_f)          , spawn myFileManager)
        --Screenshots
-       , ( (noModMask, xK_Print)
-         , spawn "screenshot"
-         )
+      , ((noModMask, xK_Print)               , spawn "screenshot")
        -- Window navigation
-       , ((modM, xK_j), windows W.focusDown)
-       , ( (modM, xK_k)
-         , windows W.focusUp
-         )
+      , ((modM, xK_j)                        , windows W.focusDown)
+      , ((modM, xK_k)                        , windows W.focusUp)
        -- Audio
-       , ((noModMask, xF86XK_AudioLowerVolume), changeVolume Down)
-       , ((noModMask, xF86XK_AudioRaiseVolume), changeVolume Up)
-       , ( (noModMask, xF86XK_AudioMute)
-         , toggleMute
-         )
+      , ((noModMask, xF86XK_AudioLowerVolume), changeVolume Down)
+      , ((noModMask, xF86XK_AudioRaiseVolume), changeVolume Up)
+      , ((noModMask, xF86XK_AudioMute)       , toggleMute)
        -- mpd
-       , ((noModMask, xF86XK_AudioPlay), io $ void $ MPD.withMPD mpdToggle)
-       , ((noModMask, xF86XK_AudioPrev), io $ void $ MPD.withMPD MPD.previous)
-       , ( (noModMask, xF86XK_AudioNext)
-         , io $ void $ MPD.withMPD MPD.next
-         )
+      , ((noModMask, xF86XK_AudioPlay), io $ void $ MPD.withMPD mpdToggle)
+      , ((noModMask, xF86XK_AudioPrev), io $ void $ MPD.withMPD MPD.previous)
+      , ((noModMask, xF86XK_AudioNext)       , io $ void $ MPD.withMPD MPD.next)
        --move Windows between workspaces
-       , ( (modM .|. shiftMask, xK_Right)
-         , shiftTo Next AnyWS >> moveTo Next AnyWS
-         )
-       , ( (modM .|. shiftMask, xK_Left)
-         , shiftTo Prev AnyWS >> moveTo Prev AnyWS
-         )
+      , ( (modM .|. shiftMask, xK_Right)
+        , shiftTo Next AnyWS >> moveTo Next AnyWS
+        )
+      , ((modM .|. shiftMask, xK_Left), shiftTo Prev AnyWS >> moveTo Prev AnyWS)
        -- Switch to previously displayed workspace
-       , ( (modM, xK_Tab)
-         , toggleWS
-         )
+      , ((modM, xK_Tab)               , toggleWS)
        -- Push Window into tiled mode
-       , ( (modM, xK_t)
-         , withFocused $ windows . W.sink
-         )
+      , ((modM, xK_t)                 , withFocused $ windows . W.sink)
        --  Toggle Fullscreening of window
-       , ((modM, xK_f), sendMessage ToggleLayout)
-       , ( (modM, xK_period)
-         , sendMessage NextLayout
-         )
+      , ((modM, xK_f)                 , sendMessage ToggleLayout)
+      , ((modM, xK_period)            , sendMessage NextLayout)
        --Resize the master window
-       , ((modM, xK_h), sendMessage Shrink)
-       , ((modM, xK_l), sendMessage Expand)
-       ]
+      , ((modM, xK_h)                 , sendMessage Shrink)
+      , ((modM, xK_l)                 , sendMessage Expand)
+      ]
     ++
     -- modm + workspace number commands
     -- mod-[1..9], Switch to workspace N
     -- mod-shift-[1..9], Move client to workspace N
     --
-        [ ((m .|. modM, k), windows $ f i)
+       [ ((m .|. modM, k), windows $ f i)
        | (i, k) <- zip (XMonad.workspaces conf) [xK_1 .. xK_9]
        , (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask)]
        ]
 
 --------------------------------------------------------------------------------
-myMouseBindings :: XConfig Layout -> M.Map (ButtonMask, Button) (Window -> X ())
+myMouseBindings
+  :: XConfig Layout -> M.Map (ButtonMask, Button) (Window -> X ())
 myMouseBindings XConfig { XMonad.modMask = modM } = M.fromList
   --Set the window to floating mode and move by dragging
   [ ( (modM, button1)
@@ -171,9 +148,7 @@ myMouseBindings XConfig { XMonad.modMask = modM } = M.fromList
     )
 
     --Raise the window to the top of the stack
-  , ( (modM, button2)
-    , \w -> focus w >> windows W.shiftMaster
-    )
+  , ((modM, button2), \w -> focus w >> windows W.shiftMaster)
 
     --Set the window to floating mode and resize by dragging
   , ( (modM, button3)
@@ -288,7 +263,7 @@ addNETSupported x = withDisplay $ \dpy -> do
   a_NET_SUPPORTED <- getAtom "_NET_SUPPORTED"
   a               <- getAtom "ATOM"
   liftIO $ do
-    sup <- (join . maybeToList) <$> getWindowProperty32 dpy a_NET_SUPPORTED r
+    sup <- join . maybeToList <$> getWindowProperty32 dpy a_NET_SUPPORTED r
     when (fromIntegral x `notElem` sup) $ changeProperty32 dpy
                                                            r
                                                            a_NET_SUPPORTED
