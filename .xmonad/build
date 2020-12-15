@@ -1,3 +1,3 @@
 #!/bin/sh
 
-stack install
+cabal new-install
