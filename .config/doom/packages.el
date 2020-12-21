@@ -6,10 +6,9 @@
 ;; (package! builtin-package :disable t)
 
 (package! company-box)
-(package! fira-code-mode)
 (package! flyspell-correct)
 (package! flyspell-correct-ivy)
-(package! format-all)
+;;(package! format-all)
 (package! irony)
 (package! org-superstar)
 (package! ox-twbs)
