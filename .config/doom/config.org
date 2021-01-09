@@ -195,6 +195,11 @@ Cycle doom themes
       "t t" #'my/cycle-theme)
 #+end_src
 
+#+begin_src emacs-lisp :tangle yes
+(map! :leader
+      :desc "Run terminal"
+      "o t" #'eshell)
+#+end_src
 ** evil
 #+begin_src emacs-lisp :tangle yes
 (setq +evil-want-o/O-to-continue-comments nil)
