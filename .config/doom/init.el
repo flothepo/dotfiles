@@ -59,6 +59,7 @@
        ocaml
        (org
         +present)
+       (python +lsp)
        rust
        sh
        yaml
