@@ -1,0 +1,14 @@
+[core]
+	autocrlf = input
+[alias]
+	tree = log --graph --abbrev-commit --pretty=short --all
+	co = checkout
+[pull]
+	rebase = true
+[commit]
+	gpgsign = true
+[init]
+	defaultBranch = main
+
+[include]
+	path = config.local
