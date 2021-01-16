@@ -10,8 +10,8 @@ OSD="no"  # On Screen Display message for KDE if enabled
 INC=2  # Increment when lowering/rising the volume
 MAX_VOL=100  # Maximum volume
 AUTOSYNC="no"  # All programs have the same volume if enabled
-VOLUME_ICONS=(" " " " )  # Volume icons array, from lower volume to higher
-MUTED_ICON=" "  # Muted volume icon
+VOLUME_ICONS=("" " " " " )  # Volume icons array, from lower volume to higher
+MUTED_ICON=" "  # Muted volume icon
 MUTED_COLOR="%{F#6b6b6b}"  # Color when the audio is muted
 NOTIFICATIONS="yes"  # Notifications when switching sinks if enabled
 #SINK_ICON=" "  # The default sink icon if a custom one isn't found
@@ -26,9 +26,9 @@ SINK_BLACKLIST=(
 # Maps PulseAudio sink names to human-readable names
 declare -A SINK_NICKNAMES
 SINK_NICKNAMES["alsa_output.usb-SomeManufacturer_SomeUsbSoundcard-00.analog-stereo"]="External Soundcard"
-SINK_NICKNAMES["alsa_output.pci-0000_09_00.3.analog-stereo"]=""
-SINK_NICKNAMES["alsa_output.usb-HP_E243m_00000000-00.analog-stereo"]=""
-SINK_NICKNAMES["bluez_sink.B8_D5_0B_56_5C_CA.a2dp_sink"]=""
+SINK_NICKNAMES["alsa_output.pci-0000_09_00.3.analog-stereo"]=""
+SINK_NICKNAMES["alsa_output.usb-HP_E243m_00000000-00.analog-stereo"]=""
+SINK_NICKNAMES["bluez_sink.B8_D5_0B_56_5C_CA.a2dp_sink"]=""
 SINK_NICKNAMES["alsa_output.usb-Logitech_USB_Headset_Logitech_USB_Headset-00.analog-stereo"]=""
 # Environment & global constants for the script
 LANGUAGE=en_US  # Some calls depend on English outputs of pactl
@@ -291,7 +291,7 @@ function output() {
     if [ "$isMuted" = "yes" ]; then
         echo "${MUTED_COLOR}${MUTED_ICON}${curVol}%   ${SINK_ICON}${nickname}${END_COLOR}"
     else
-        echo "${volIcon}${curVol}%   ${SINK_ICON}${nickname}"
+        echo "${volIcon}${curVol}   ${SINK_ICON}${nickname}"
     fi
 }
 
