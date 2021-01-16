@@ -21,14 +21,15 @@ foreground = ${color.foreground}
 line-size = 4
 line-color = #f00
 
-font-0 = "Fira Sans:size=10:antialias=true;0"
-font-1 = "Font Awesome 5 Free Solid:style=Solid:size=10;1"
-font-2 = "Font Awesome 5 Brands:size=10;1"
-font-3 = "Fira Code:size=10:antialias=true;0"
+font-0 = "BetecknaLowerCase:size=10:antialias=true;1"
+font-1 = "icomoon\-feather:size=12:antialias=true;1"
+font-2 = "Font Awesome 5 Free Solid:style=Solid:size=10;1"
+font-3 = "Font Awesome 5 Brands:size=10;1"
+#font-4 = "Fira Code:size=10:antialias=true;0"
 
 modules-left = workspaces
-modules-center = title
-modules-right = ebook adb mpd date
+#modules-center = title
+modules-right = ebook adb pulseaudio-control date
 
 tray-position = right
 tray-background = ${color.background}
@@ -69,10 +70,10 @@ label-urgent-foreground = ${color.foreground}
 label-urgent-background = ${color.alert}
 label-empty = %name%
 label-empty-foreground = ${color.foreground-alt}
-label-active-padding    = 4
-label-urgent-padding    = 4
-label-occupied-padding  = 4
-label-empty-padding     = 4
+label-active-padding    = 2
+label-urgent-padding    = 2
+label-occupied-padding  = 2
+label-empty-padding     = 2
 
 [module/adb]
 type = custom/script
@@ -135,7 +136,7 @@ time = " %H:%M"
 time-alt = " %a, %b %d %H:%M"
 
 format-padding = 1
-format-prefix = %{T3}%{T-}
+format-prefix = %{T3}%{T-}
 label = %time%
 format-foreground = ${color.foreground}
 format-background = ${color.accent-0}
@@ -147,11 +148,11 @@ tail = true
 label=%output%
 format-background = ${color.accent-2-alt}
 
-exec = ~/.config/polybar/scripts/pulseaudio-control.sh listen
+exec = $HOME/.config/polybar/scripts/pulseaudio-control.sh listen
 click-right = exec pavucontrol &
-click-left = ~/.config/polybar/scripts/pulseaudio-control.sh togmute
-click-middle = ~/.config/polybar/scripts/pulseaudio-control.sh next-sink
-scroll-up = ~/.config/polybar/scripts/pulseaudio-control.sh up
-scroll-down = ~/.config/polybar/scripts/pulseaudio-control.sh down
+click-left = pactl set-sink-mute @DEFAULT_SINK@ toggle
+click-middle = $HOME/.config/polybar/scripts/pulseaudio-control.sh next-sink
+scroll-up = pactl set-sink-volume @DEFAULT_SINK@ +2%
+scroll-down = pactl set-sink-volume @DEFAULT_SINK@ -2%
 label-padding = 2
 label-foreground = ${color.foreground}
