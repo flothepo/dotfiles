@@ -165,8 +165,11 @@ myLayoutHook = hooks layout
         >>> lessBorders (Combine Union Screen OnlyLayoutFloatBelow)
     -- >>> avoidStruts
     layout =
-      avoidStruts $ gaps (Tall 1 (3 / 100) (1 / 2) ||| tabbed shrinkText theme)
+      avoidStruts $ gaps (stack ||| vstack ||| tabs)
     gaps = spacingRaw True (Border 0 0 0 0) True (Border 4 4 4 4) True
+    stack = Tall 1 (3 / 100) (1 / 2)
+    vstack = Mirror $ Tall 1 (3 / 100) (3 / 4)
+    tabs = tabbed shrinkText theme
     theme =
       def
         { fontName = "xft:Fira Sans:size=11",
