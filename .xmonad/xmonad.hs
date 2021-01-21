@@ -194,7 +194,8 @@ myManageHook =
       className =? "Gcr-prompter" <&&> title =? "Unlock Keyring" --> doCenterFloat,
       className =? "Pavucontrol" --> doCenterFloat,
       className =? "Evolution-alarm-notify" --> doFloat,
-      className =? "kdeconnect.daemon" --> doFullFloat
+      className =? "kdeconnect.daemon" --> doFullFloat,
+      className =? "Gpick" --> doFloat
     ]
 
 --------------------------------------------------------------------------------
