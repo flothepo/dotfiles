@@ -26,7 +26,7 @@ SINK_BLACKLIST=(
 # Maps PulseAudio sink names to human-readable names
 declare -A SINK_NICKNAMES
 SINK_NICKNAMES["alsa_output.usb-SomeManufacturer_SomeUsbSoundcard-00.analog-stereo"]="External Soundcard"
-SINK_NICKNAMES["alsa_output.pci-0000_09_00.3.analog-stereo"]=""
+SINK_NICKNAMES["alsa_output.pci-0000_0b_00.3.analog-stereo"]=""
 SINK_NICKNAMES["alsa_output.usb-HP_E243m_00000000-00.analog-stereo"]=""
 SINK_NICKNAMES["bluez_sink.B8_D5_0B_56_5C_CA.a2dp_sink"]=""
 SINK_NICKNAMES["alsa_output.usb-Logitech_USB_Headset_Logitech_USB_Headset-00.analog-stereo"]=""

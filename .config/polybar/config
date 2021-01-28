@@ -1,10 +1,26 @@
-include-file = $HOME/.config/polybar/colors.ini
-
 [settings]
 screenchange-reload = true
 
 [global/wm]
 margin-top = 5
+
+# COLORS ##############################################################
+
+[color]
+background = #2E3440
+buffer = #4c566a
+foreground = #D8DEE9
+accent-0 = #5e81ac
+accent-1= #8FBCBB
+accent-2= #88C0D0
+accent-3= #81A1C1
+urgent = #BF616A
+alert = #bf616a
+notify = #EBCB8B
+success = #A3BE8C
+function = #B48EAD
+
+# BARS ################################################################
 
 [bar/sub]
 inherit=bar/main
@@ -13,23 +29,21 @@ tray-position=none
 [bar/main]
 monitor = ${env:MONITOR:}
 width = 100%
-height = 27
+height = 30
 
 background = ${color.background}
 foreground = ${color.foreground}
 
-line-size = 4
+line-size = 5
 line-color = #f00
 
 font-0 = "BetecknaLowerCase:size=10:antialias=true;1"
 font-1 = "icomoon\-feather:size=12:antialias=true;1"
 font-2 = "Font Awesome 5 Free Solid:style=Solid:size=10;1"
 font-3 = "Font Awesome 5 Brands:size=10;1"
-#font-4 = "Fira Code:size=10:antialias=true;0"
 
 modules-left = workspaces
-#modules-center = title
-modules-right = ebook adb pulseaudio-control date
+modules-right = ebook adb dunst pulseaudio-control wlan date
 
 tray-position = right
 tray-background = ${color.background}
@@ -39,41 +53,7 @@ locale = de_DE.utf8
 
 cursor-click = pointer
 
-[module/title]
-type = internal/xwindow
-format = <label>
-label = %title%
-label-empty = Empty
-
-[module/workspaces]
-type = internal/xworkspaces
-pin-workspaces = false
-
-enable-click = true
-enable-scroll = true
-
-format = <label-state>
-format-padding = 0
-
-label-monitor = %name%
-
-label-active = %name%
-label-active-background = ${color.accent-0}
-label-active-underline = ${color.accent-0}
-
-label-occupied = %name%
-label-occupied-foreground = ${color.foreground}
-label-occupied-underline = ${color.accent-0}
-
-label-urgent = %name%
-label-urgent-foreground = ${color.foreground}
-label-urgent-background = ${color.alert}
-label-empty = %name%
-label-empty-foreground = ${color.foreground-alt}
-label-active-padding    = 2
-label-urgent-padding    = 2
-label-occupied-padding  = 2
-label-empty-padding     = 2
+# MODULES #############################################################
 
 [module/adb]
 type = custom/script
@@ -82,6 +62,31 @@ exec-if = pgrep -x adb
 interval = 2
 click-left = exec polybar-adb-push
 format-background = ${color.accent-1}
+
+[module/date]
+type = internal/date
+interval = 1
+
+time = " %H:%M"
+time-alt = " %a, %b %d %H:%M"
+
+format-padding = 1
+format-prefix = %{T3}%{T-}
+label = %time%
+format-foreground = ${color.foreground}
+format-background = ${color.background}
+format-underline = ${color.accent-0}
+label-font = 3
+
+[module/dunst]
+type = custom/script
+exec = polybar-dunst
+exec-if = pgrep dunst
+interval = 2
+click-left = dunstctl set-paused toggle
+
+format-underline = ${color.accent-1}
+format-padding = 2
 
 [module/ebook]
 type = custom/script
@@ -111,42 +116,12 @@ icon-prev = 
 icon-pause = 
 icon-play = 
 
-[module/wlan]
-type = internal/network
-interface = wlan0
-interval = 3.0
-
-format-connected = <ramp-signal>
-format-connected-background = ${color.accent-2}
-label-connected = %essid%
-
-format-disconnected = ""
-format-disconnected-background = ${color.alert}
-label-disconnected = %essid% disconnected
-
-ramp-signal-0 = ""
-ramp-signal-padding = 1
-ramp-signal-foreground = ${color.foreground}
-
-[module/date]
-type = internal/date
-interval = 1
-
-time = " %H:%M"
-time-alt = " %a, %b %d %H:%M"
-
-format-padding = 1
-format-prefix = %{T3}%{T-}
-label = %time%
-format-foreground = ${color.foreground}
-format-background = ${color.accent-0}
-label-font = 3
-
 [module/pulseaudio-control]
 type = custom/script
 tail = true
 label=%output%
-format-background = ${color.accent-2-alt}
+format-background = ${color.background}
+format-underline  = ${color.accent-3}
 
 exec = $HOME/.config/polybar/scripts/pulseaudio-control.sh listen
 click-right = exec pavucontrol &
@@ -156,3 +131,51 @@ scroll-up = pactl set-sink-volume @DEFAULT_SINK@ +2%
 scroll-down = pactl set-sink-volume @DEFAULT_SINK@ -2%
 label-padding = 2
 label-foreground = ${color.foreground}
+
+[module/wlan]
+type = internal/network
+interface = wlan0
+interval = 3.0
+
+format-connected = <ramp-signal>
+format-connected-background = ${color.background}
+format-connected-underline  = ${color.accent-2}
+format-disconnected = ""
+format-disconnected-background = ${color.alert}
+
+label-disconnected = %essid% disconnected
+label-connected = %essid%
+
+ramp-signal-0 = ""
+ramp-signal-padding = 1
+ramp-signal-foreground = ${color.foreground}
+
+[module/workspaces]
+type = internal/xworkspaces
+pin-workspaces = false
+
+enable-click = true
+enable-scroll = true
+
+format = <label-state>
+format-padding = 0
+
+label-monitor = %name%
+
+label-active = %name%
+label-active-background = ${color.buffer}
+label-active-underline = ${color.buffer}
+
+label-occupied = %name%
+label-occupied-foreground = ${color.foreground}
+label-occupied-underline = ${color.buffer}
+
+label-urgent = %name%
+label-urgent-foreground = ${color.foreground}
+label-urgent-background = ${color.alert}
+label-empty = %name%
+label-empty-foreground = ${color.buffer}
+label-active-padding    = 2
+label-urgent-padding    = 2
+label-occupied-padding  = 2
+label-empty-padding     = 2
