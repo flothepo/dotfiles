@@ -1,0 +1,19 @@
+#+TITLE: My Dotfiles
+
+* Installation
+#+begin_src shell
+git clone --separate-git-dir=$HOME/dotfiles git@github.com:flothepo/dotfiles.git tmpdir
+cp -r tmpdir/.* $HOME
+rm -rf $HOME/.git tmpdir
+printf "gitdir: $HOME/dotfiles" > "$HOME/.git"
+#+end_src
+
+Alias for zsh:
+#+begin_src zsh
+alias config='/usr/bin/git --git-dir=$HOME/dotfiles/ --work-tree=$HOME'
+#+end_src
+
+Do not show untracked files:
+#+begin_src zsh
+config config status.showUntrackedFiles no
+#+end_src
