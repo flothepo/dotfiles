@@ -4,5 +4,5 @@ configuration {
   modi: "drun,window";
   show-icons:         true;
   icon-theme:         "ePapirus";
-  theme: "sidetab";
+  theme: "ribbon";
 }
