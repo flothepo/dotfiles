@@ -61,7 +61,7 @@ exec = polybar-adb
 exec-if = pgrep -x adb
 interval = 2
 click-left = exec polybar-adb-push
-format-background = ${color.accent-1}
+format-underline = ${color.accent-1}
 
 [module/date]
 type = internal/date
