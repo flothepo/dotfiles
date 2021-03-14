@@ -3,67 +3,84 @@
 (setq doom-localleader-key ",")
 
 (doom!
-       :completion
-       (company +childframe)
-       (ivy +icons)
+ :completion
+ (company +childframe)
+ (ivy
+  +prescient
+  +icons)
 
-       :ui
-       doom
-       hl-todo
-       modeline
-       ophints
-       (popup
-        +all
-        +defaults)
-       treemacs
-       vc-gutter
-       window-select
-       ;;(ligatures +fira)
+ :ui
+ doom
+ hl-todo
+ modeline
+ ophints
+ (popup
+  +all
+  +defaults)
+ treemacs
+ vc-gutter
+ window-select
 
-       :editor
-       (evil +everywhere)
-       file-templates
-       fold
-       (format +onsave)
-       snippets
+ :editor
+ (evil +everywhere)
+ file-templates
+ fold
+ (format +onsave)
+ parinfer
+ snippets
+ lispy
 
-       :emacs
-       dired
-       electric
-       ibuffer
-       vc
-       undo
+ :emacs
+ (dired +icons)
+ electric
+ vc
+ (undo +tree)
 
-       :email
-       mu4e
+ :email
+ mu4e
 
-       :tools
-       (eval +overlay)
-       flycheck
-       (lookup
-        +docsets)        
-       lsp
-       magit
-       make
-       rgb
+ :checkers
+ (syntax +childframe)
+ (spell +flyspell +hunspell)
 
-       :lang
-       cc
-       common-lisp
-       data
-       emacs-lisp
-       (haskell +lsp)
-       (javascript +lsp)
-       (latex +lsp)
-       markdown
-       ocaml
-       (org
-        +present)
-       (python +lsp)
-       rust
-       sh
-       yaml
+ :term
+ eshell
 
-       :config
-       literate
-       (default +bindings +smartparens))
+ :tools
+ (eval +overlay)
+ (docker +lsp)
+ (debugger +lsp)
+ flycheck
+ (lookup
+  +docsets)
+ lsp
+ magit
+ make
+ rgb
+
+ :lang
+ cc
+ common-lisp
+ data
+ emacs-lisp
+ (haskell +lsp)
+ (javascript +lsp)
+ json
+ (latex
+  +lsp
+  +latexmk
+  +fold)
+ markdown
+ ocaml
+ (org
+  +present)
+ (python +lsp)
+ rest
+ (rust +lsp)
+ sh
+ web
+ yaml
+
+ :config
+ literate
+ (default +bindings +smartparens))
