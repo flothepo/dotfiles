@@ -80,13 +80,16 @@ myKeys conf@XConfig {XMonad.modMask = modM} =
       -- Utilities
       ((modM, xK_b), spawn myBrowser),
       ((modM, xK_e), spawn myEditor),
-      ((modM, xK_m), spawn "emacsclient -ce '(mu4e)'"),
+      ((modM .|. shiftMask, xK_l), spawn "light-locker-command -l"),
       ((modM, xK_t), spawn myFileManager),
       --rofi
       ((modM, xK_space), spawn "rofi -show drun"),
-      ( (modM .|. shiftMask, xK_e),
-        spawn "rofi -show emoji -modi emoji:rofimoji"
-      ),
+      -- , ( (modM .|. shiftMask, xK_e)
+      --   , spawn "rofi -show emoji -modi emoji:rofimoji"
+      --   )
+
+      -- calculator
+      ((modM, xK_c), spawn "emacsclient -c -e \"(calc)\""),
       -- file manager
       ((modM .|. shiftMask, xK_f), spawn myFileManager),
       --Screenshots
@@ -152,7 +155,8 @@ myStartupHook =
   mapM_ spawnOnce autostarts >> setWMName "compiz" >> addEWMHFullscreen
   where
     autostarts =
-      [ "launch-polybar", -- launch polybar on all monitors
+      [ "launch-polybar",
+        -- launch polybar on all monitors
         "picom" -- compositor
       ]
 
@@ -164,8 +168,7 @@ myLayoutHook = hooks layout
       toggleLayouts Full
         >>> lessBorders (Combine Union Screen OnlyLayoutFloatBelow)
     -- >>> avoidStruts
-    layout =
-      avoidStruts $ gaps (stack ||| vstack ||| tabs)
+    layout = avoidStruts $ gaps (stack ||| vstack ||| tabs)
     gaps = spacingRaw True (Border 0 0 0 0) True (Border 4 4 4 4) True
     stack = Tall 1 (3 / 100) (1 / 2)
     vstack = Mirror $ Tall 1 (3 / 100) (3 / 4)
@@ -198,7 +201,8 @@ myManageHook =
       className =? "Pavucontrol" --> doCenterFloat,
       className =? "Evolution-alarm-notify" --> doFloat,
       className =? "kdeconnect.daemon" --> doFullFloat,
-      className =? "Gpick" --> doFloat
+      className =? "Gpick" --> doFloat,
+      className =? "Pcmanfm" --> doFloat
     ]
 
 --------------------------------------------------------------------------------
