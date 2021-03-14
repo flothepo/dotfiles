@@ -9,6 +9,7 @@
 (package! flyspell-correct)
 (package! flyspell-correct-ivy)
 ;;(package! format-all)
-(package! irony)
 (package! org-superstar)
 (package! ox-twbs)
+(package! mixed-pitch)
+(package! ediprolog)

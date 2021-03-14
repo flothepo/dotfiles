@@ -1,15 +1,16 @@
 #+TITLE: doom emacs config
 #+AUTHOR: flothepo
 #+PROPERTY: header-args:elisp :lexical t
+#+STARTUP: overview
 
 * Doom
 ** Theme and font
 #+begin_src emacs-lisp :tangle yes
 (setq doom-theme 'doom-palenight
       doom-font (font-spec :family "Fira Code" :size 16)
-      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 12)
+      doom-variable-pitch-font (font-spec :family "Overpass" :size 14)
       doom-big-font-mode nil
-      doom-big-font-increment 2
+      doom-big-font-increment 6
       doom-themes-treemacs-theme "doom-colors")
 
 (defvar my/themes
@@ -27,13 +28,12 @@
   (message "Loaded theme %s" (symbol-name doom-theme)))
 #+end_src
 
-Bold keywords
 #+begin_src emacs-lisp :tangle yes
-(defun my-theme-customizations ()
-  (set-face-attribute 'font-lock-keyword-face nil :weight 'bold))
-
-(add-hook! 'doom-load-theme-hook #'my-theme-customizations)
+(custom-set-faces!
+  '(font-lock-keyword-face :weight bold)
+  '(font-lock-function-name-face :weight bold))
 #+end_src
+
 Show Unicode glyphs using all-the-icons font
 #+begin_src emacs-lisp :tangle yes
 (set-fontset-font t 'unicode "all-the-icons" nil 'prepend)
@@ -98,6 +98,11 @@ Ask which buffer to open after a window split
 (add-hook 'mu4e-headers-mode-hook (lambda () (setq global-hl-line-mode nil)))
 (add-hook 'mu4e-view-mode-hook (lambda () (setq global-hl-line-mode nil)))
 #+end_src
+** evil
+#+begin_src emacs-lisp :tangle yes
+(map! :nv [remap evil-next-line] 'evil-next-visual-line
+      :nv [remap evil-previous-line] 'evil-previous-visual-line)
+#+end_src
 ** flyspell
 Use hunspell
 #+begin_src emacs-lisp :tangle yes
@@ -112,15 +117,9 @@ better matching
 (setq ivy-re-builders-alist
       '((t . ivy--regex-plus)))
 #+end_src
-** org
-Visual stuff
+** projectile
 #+begin_src emacs-lisp :tangle yes
-(after! org
-  (setq org-pretty-entities nil
-        org-ellipsis  "▼"))
-
-(add-hook! org-mode #'org-superstar-mode)
-(setq org-superstar-prettify-item-bullets nil)
+(setq projectile-ignored-projects '("~/"))
 #+end_src
 ** recentf
 #+begin_src emacs-lisp :tangle yes
@@ -134,16 +133,22 @@ Do not show files ignored by git
 (after! treemacs
   (add-to-list 'treemacs-pre-file-insert-predicates #'treemacs-is-file-git-ignored?))
 #+end_src
-* Programming
-** LSP
+* Language Configuration
+** General
+*** LSP
 #+begin_src emacs-lisp :tangle yes
 (setq lsp-modeline-code-actions-segments '(count icon name))
 #+end_src
-*** lsp-ui
+**** lsp-ui
 #+begin_src emacs-lisp :tangle yes
 (after! lsp-ui
   (setq lsp-ui-doc-enable t
-        lsp-ui-doc-position 'top))
+        lsp-ui-doc-header t
+        lsp-ui-doc-include-signature t
+        lsp-ui-doc-position 'bottom
+        lsp-ui-doc-show-with-mouse t
+        lsp-ui-doc-max-height 30
+        lsp-ui-doc-max-width 120))
 #+end_src
 ** Haskell
 No annoying popups
@@ -166,6 +171,91 @@ Some utility functions for interacting with hoogle
   "Lookup the region between start and end on hoogle"
   (interactive "r")
   (haskell-hoogle (buffer-substring start end)))
+#+end_src
+*** Keybindings
+#+begin_src emacs-lisp :tangle yes
+(map! :map haskell-mode-map
+      :localleader
+      (:prefix-map ("l" . "lookup on hoogle")
+       :desc "lookup word" "w" #'hoogle-word-under-caret
+       :desc "lookup region" "r" #'hoogle-region)
+      (:prefix-map ("r" . "run haskell process")
+       :desc "load file" "r" #'haskell-process-load-file)
+      :desc "switch to repl" "s" #'haskell-interactive-switch)
+
+(map! :map interactive-haskell-mode-map
+      :localleader
+      :desc "switch to code" "s" #'haskell-interactive-switch-back)
+#+end_src
+** LaTeX
+*** Compiling
+#+begin_src emacs-lisp :tangle yes
+(setq TeX-save-query nil
+      TeX-show-compilation t)
+#+end_src
+*** Visuals
+#+begin_src emacs-lisp :tangle yes
+(add-hook 'LaTeX-mode-hook #'mixed-pitch-mode)
+#+end_src
+** org
+Visual stuff
+#+begin_src emacs-lisp :tangle yes
+(after! org
+  (setq org-pretty-entities nil
+        org-ellipsis  " ▼"
+        org-superstar-prettify-item-bullets nil))
+
+(add-hook! 'org-mode-hook #'org-superstar-mode #'mixed-pitch-mode)
+#+end_src
+
+*** export
+Convenience function so to export the file to html on save for use in dir-locals.
+#+begin_src emacs-lisp :tangle yes
+(defun my/org-save-and-export ()
+  (interactive)
+  (if (eq major-mode 'org-mode)
+      (org-re-reveal-export-to-html)))
+#+end_src
+Use css classes for syntax highlighting
+#+begin_src emacs-lisp :tangle yes
+(setq org-html-htmlize-output-type 'css)
+#+end_src
+** Prolog
+#+begin_src emacs-lisp :tangle yes
+(add-to-list 'auto-mode-alist '("\\.pl\\'" . prolog-mode))
+
+(setq prolog-system 'scryer
+      ediprolog-system 'scryer
+      prolog-electric-if-then-else-flag t)
+
+(map! :map prolog-mode-map
+      :localleader
+      (:prefix-map ("e" . "ediprolog")
+       :desc "do what i mean" "e" #'ediprolog-dwim
+       :desc "remove all interactions" "d" #'ediprolog-remove-interactions
+       :desc "consult buffer" "c" #'ediprolog-consult
+       :desc "kill prolog process" "k" #'ediprolog-kill-prolog)) 
+
+(map! :map prolog-mode-map
+      :i "<C-return>" (cmd! (end-of-line)
+                         (ediprolog-dwim)))
+#+end_src
+** rust
+#+begin_src emacs-lisp :tangle yes
+(setq lsp-rust-analyzer-inlay-hints-mode t
+      lsp-rust-analyzer-display-chaining-hints t
+      lsp-rust-analyzer-display-parameter-hints t)
+#+end_src
+*** Debugging
+#+begin_src emacs-lisp :tangle yes
+(dap-register-debug-template
+ "Rust::LLDB Run Configuration"
+ (list :type "lldb"
+       :request "launch"
+       :name "LLDB::Run"
+       :gdb-path "rust-lldb"
+       :target nil
+       :cwd nil))
 #+end_src
 * Keybindings
 ** General
@@ -200,22 +290,12 @@ Cycle doom themes
       :desc "Run terminal"
       "o t" #'eshell)
 #+end_src
+** Mouse
+#+begin_src emacs-lisp :tangle yes
+(map! :n [mouse-8] #'better-jumper-jump-backward
+      :n [mouse-9] #'better-jumper-jump-forward)
+#+end_src
 ** evil
 #+begin_src emacs-lisp :tangle yes
 (setq +evil-want-o/O-to-continue-comments nil)
-#+end_src
-** Haskell
-#+begin_src emacs-lisp :tangle yes
-(map! :map haskell-mode-map
-      :localleader
-      (:prefix-map ("l" . "lookup on hoogle")
-       :desc "lookup word" "w" #'hoogle-word-under-caret
-       :desc "lookup region" "r" #'hoogle-region)
-      (:prefix-map ("r" . "run haskell process")
-       :desc "load file" "r" #'haskell-process-load-file)
-      :desc "switch to repl" "s" #'haskell-interactive-switch)
-
-(map! :map interactive-haskell-mode-map
-      :localleader
-      :desc "switch to code" "s" #'haskell-interactive-switch-back)
 #+end_src
