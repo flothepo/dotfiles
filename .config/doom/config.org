@@ -78,6 +78,22 @@ Ask which buffer to open after a window split
 #+begin_src emacs-lisp :tangle yes
 (setq user-mail-address "f.guthmann@mailbox.org")
 #+end_src
+** Server
+Systemd daemon
+#+begin_src systemd :tangle ~/.config/systemd/user/emacs.service :mkdirp yes
+[Unit]
+Description=Emacs server daemon
+Documentation=info:emacs man:emacs(1) https://gnu.org/software/emacs/
+
+[Service]
+Type=forking
+ExecStart=sh -c 'emacs --daemon && emacsclient -c --eval "(delete-frame)"'
+ExecStop=/usr/bin/emacsclient --no-wait --eval "(progn (setq kill-emacs-hook nil) (kill emacs))"
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
+#+end_src
 
 * Basic modes
 ** calendar
