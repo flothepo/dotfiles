@@ -14,3 +14,7 @@ source $ZDOTDIR/aliases.zsh
 source $ZDOTDIR/util.zsh
 
 spaceship_customs
+
+if [ "$(tty)" = "/dev/tty1" ]; then
+	exec sway
+fi
