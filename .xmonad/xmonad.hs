@@ -55,7 +55,7 @@ myFocusedBorderColor = "#afdedc"
 myWorkspaces :: [String]
 -- [cli, browser, mail, work] ++ numbered
 myWorkspaces =
-  ["\xe9dd", "\xe972", "\xe990", "\xe926", "\xe9c6"]
+  ["\xf120", "\xe007", "\xf4ad", "\xf0b1", "\xf144"]
     ++ map (show :: Int -> String) [6 .. 9]
 
 --------------------------------------------------------------------------------
@@ -83,10 +83,9 @@ myKeys conf@XConfig {XMonad.modMask = modM} =
       ((modM, xK_t), spawn myFileManager),
       --rofi
       ((modM, xK_space), spawn "rofi -show drun"),
-      -- , ( (modM .|. shiftMask, xK_e)
-      --   , spawn "rofi -show emoji -modi emoji:rofimoji"
-      --   )
-
+      ( (modM .|. shiftMask, xK_e),
+        spawn "rofi -show emoji -modi emoji:rofimoji"
+      ),
       -- calculator
       ((modM, xK_c), spawn "emacsclient -c -e \"(calc)\""),
       -- file manager
@@ -166,9 +165,10 @@ myLayoutHook = hooks layout
     hooks =
       toggleLayouts Full
         >>> lessBorders (Combine Union Screen OnlyLayoutFloatBelow)
-    -- >>> avoidStruts
-    layout = avoidStruts $ gaps (stack ||| vstack ||| tabs)
+        >>> avoidStruts
+        >>> gaps
     gaps = spacingRaw True (Border 0 0 0 0) True (Border 4 4 4 4) True
+    layout = stack ||| vstack ||| tabs
     stack = Tall 1 (3 / 100) (1 / 2)
     vstack = Mirror $ Tall 1 (3 / 100) (3 / 4)
     tabs = tabbed shrinkText theme
@@ -201,7 +201,8 @@ myManageHook =
       className =? "Evolution-alarm-notify" --> doFloat,
       className =? "kdeconnect.daemon" --> doFullFloat,
       className =? "Gpick" --> doFloat,
-      className =? "Pcmanfm" --> doFloat
+      className =? "Pcmanfm" --> doFloat,
+      className =? "Ristretto" --> doFloat
     ]
 
 --------------------------------------------------------------------------------
