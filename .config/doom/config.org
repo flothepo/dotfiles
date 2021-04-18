@@ -67,8 +67,7 @@ Ask which buffer to open after a window split
  uniquify-buffer-name-style 'forward
  window-combination-resize t
  x-stretch-cursor t)
-#+end_src
-#+begin_src emacs-lisp :tangle yes
+
 (setq
  auto-save-default t
  inhibit-compacting-font-caches t)
@@ -248,17 +247,6 @@ Use css classes for syntax highlighting
 (setq lsp-rust-analyzer-inlay-hints-mode t
       lsp-rust-analyzer-display-chaining-hints t
       lsp-rust-analyzer-display-parameter-hints t)
-#+end_src
-*** Debugging
-#+begin_src emacs-lisp :tangle yes
-(dap-register-debug-template
- "Rust::LLDB Run Configuration"
- (list :type "lldb"
-       :request "launch"
-       :name "LLDB::Run"
-       :gdb-path "rust-lldb"
-       :target nil
-       :cwd nil))
 #+end_src
 * Keybindings
 ** General
