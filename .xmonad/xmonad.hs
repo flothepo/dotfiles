@@ -10,7 +10,6 @@ import Control.Monad
 import qualified Data.Map as M
 import Data.Maybe (maybeToList)
 import Graphics.X11.ExtraTypes.XF86
-import qualified Network.MPD as MPD
 import System.Environment (getProgName)
 import System.Exit (exitSuccess)
 import Text.Printf (printf)
@@ -101,10 +100,10 @@ myKeys conf@XConfig {XMonad.modMask = modM} =
       ((noModMask, xF86XK_AudioLowerVolume), changeVolume Down),
       ((noModMask, xF86XK_AudioRaiseVolume), changeVolume Up),
       ((noModMask, xF86XK_AudioMute), toggleMute),
-      -- mpd
-      ((noModMask, xF86XK_AudioPlay), io $ void $ MPD.withMPD mpdToggle),
-      ((noModMask, xF86XK_AudioPrev), io $ void $ MPD.withMPD MPD.previous),
-      ((noModMask, xF86XK_AudioNext), io $ void $ MPD.withMPD MPD.next),
+      -- playerctl
+      ((noModMask, xF86XK_AudioPlay), spawn "playerctl play-pause"),
+      ((noModMask, xF86XK_AudioPrev), spawn "playerctl previous"),
+      ((noModMask, xF86XK_AudioNext), spawn "playerctl next"),
       --move Windows between workspaces
       ( (modM .|. shiftMask, xK_Right),
         shiftTo Next AnyWS >> moveTo Next AnyWS
@@ -241,17 +240,6 @@ restartXmonad = do
   whoami <- liftIO getProgName
   when status $ restart whoami True
 
--- mpd
-
--- Toggle play/pause
-mpdToggle :: MPD.MonadMPD m => m ()
-mpdToggle = do
-  s <- MPD.stState <$> MPD.status
-  MPD.pause $ b s
-  where
-    b MPD.Playing = True
-    b _ = False
-
 -- Notifications
 notify' :: MonadIO a => String -> String -> String -> a ()
 notify' nTitle icon text =
@@ -303,4 +291,4 @@ changeVolume :: MonadIO m => VolumeChange -> m ()
 changeVolume = pactl volumeCmd defaultSink . show
 
 pactl :: MonadIO m => String -> String -> String -> m ()
-pactl cmd sink value = spawn $ printf "pactl %s %s %s" cmd sink value
+pactl cmd sink value = spawn $ "pactl " ++ cmd ++ " " ++ sink ++ " " ++ value
