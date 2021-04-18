@@ -7,7 +7,8 @@
 ** Theme and font
 #+begin_src emacs-lisp :tangle yes
 (setq doom-theme 'doom-palenight
-      doom-font (font-spec :family "Fira Code" :size 16)
+      doom-font (font-spec :family "Julia Mono" :size 16)
+      doom-unicode-font (font-spec :family "Font Awesome 5 Free Solid" :size 16)
       doom-variable-pitch-font (font-spec :family "Overpass" :size 14)
       doom-big-font-mode nil
       doom-big-font-increment 6
@@ -62,6 +63,7 @@ Ask which buffer to open after a window split
 #+begin_src emacs-lisp :tangle yes
 (setq-default
  tab-width 4
+ scroll-margin 2
  uniquify-buffer-name-style 'forward
  window-combination-resize t
  x-stretch-cursor t)
@@ -70,6 +72,8 @@ Ask which buffer to open after a window split
 (setq
  auto-save-default t
  inhibit-compacting-font-caches t)
+
+(mouse-avoidance-mode 'exile)
 #+end_src
 ** Personal
 #+begin_src emacs-lisp :tangle yes
@@ -145,10 +149,9 @@ Do not show files ignored by git
   (setq lsp-ui-doc-enable t
         lsp-ui-doc-header t
         lsp-ui-doc-include-signature t
-        lsp-ui-doc-position 'bottom
-        lsp-ui-doc-show-with-mouse t
-        lsp-ui-doc-max-height 30
-        lsp-ui-doc-max-width 120))
+        lsp-ui-doc-position 'top
+        lsp-ui-doc-max-height 20
+        lsp-ui-doc-max-width 30))
 #+end_src
 ** Haskell
 No annoying popups
