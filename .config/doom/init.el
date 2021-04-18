@@ -45,6 +45,7 @@
 
  :term
  eshell
+ vterm
 
  :tools
  (eval +overlay)
