@@ -65,6 +65,7 @@ input * {
     bindsym $mod+b exec $browser
 
     bindsym Print exec screenshot
+    bindsym $mod+Shift+e exec wofimoji
 
     # Drag floating windows by holding down $mod and left mouse button.
     # Resize them with right mouse button + $mod.
@@ -77,7 +78,7 @@ input * {
     bindsym $mod+q reload
 
     # Exit sway (logs you out of your Wayland session)
-    bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -b 'Yes, exit sway' 'swaymsg exit'
+    bindsym $mod+Shift+q exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -b 'Yes, exit sway' 'swaymsg exit'
 
     bindsym $mod+s exec swaylock -f -c cfd6e6
 #
