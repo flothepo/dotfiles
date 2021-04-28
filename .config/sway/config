@@ -11,6 +11,7 @@ set $right l
 set $term alacritty
 set $editor emacsclient -c
 set $browser firefox
+set $filemanager pcmanfm
 
 set $menu wofi --show drun | xargs swaymsg exec --
 set $powermenu powermenu
@@ -63,6 +64,7 @@ input * {
 
     bindsym $mod+e exec $editor
     bindsym $mod+b exec $browser
+    bindsym $mod+Shift+Return exec $filemanager
 
     bindsym Print exec screenshot
     bindsym $mod+Shift+e exec wofimoji
@@ -233,7 +235,7 @@ exec_always {
 
 for_window [app_id="org.keepassxc.KeePassXC"] floating enable
 for_window [app_id="pavucontrol"] floating enable
-for_window [class="[Pp]cmanfm"] floating enable, move position mouse
+for_window [app_id="[Pp]cmanfm"] floating enable
 for_window [app_id="com.nextcloud.desktopclient.nextcloud"] floating enable
 for_window [app_id="firefox" title="^Picture-in-Picture$"] floating enable 
 #for_window [shell="xwayland"] title_format "<span>[X] %title</span>"
