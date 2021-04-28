@@ -23,7 +23,7 @@ exec mako
 exec nextcloud
 
 
-output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
+output * bg /usr/share/backgrounds/linux_gruv.jpg fill
 
 output DP-1 pos 0 0
 output DP-2 pos 1920 0
@@ -232,6 +232,7 @@ exec_always {
     gsettings set $gnome-schema gtk-theme "Arc-Dark"
     gsettings set $gnome-schema icon-theme "Papirus-Dark"
     gsettings set $gnome-schema font-name "Overpass"
+    gsettings set $gnome-schema cursor-theme "capitaine-cursors"
 }
 
 for_window [app_id="org.keepassxc.KeePassXC"] floating enable
@@ -239,6 +240,10 @@ for_window [app_id="pavucontrol"] floating enable
 for_window [app_id="[Pp]cmanfm"] floating enable
 for_window [app_id="com.nextcloud.desktopclient.nextcloud"] floating enable
 for_window [app_id="firefox" title="^Picture-in-Picture$"] floating enable 
+for_window [app_id="imv"] floating enable
+for_window [app_id="mpv"] floating enable
+
+
 #for_window [shell="xwayland"] title_format "<span>[X] %title</span>"
 
 include /etc/sway/config.d/*
