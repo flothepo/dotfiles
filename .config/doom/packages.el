@@ -13,3 +13,4 @@
 (package! ox-twbs)
 (package! mixed-pitch)
 (package! ediprolog)
+(package! adoc-mode)

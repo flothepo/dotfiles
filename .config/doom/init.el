@@ -14,6 +14,7 @@
  hl-todo
  modeline
  ophints
+ (emoji +ascii +unicode)
  (popup
   +all
   +defaults)
@@ -72,7 +73,7 @@
   +latexmk
   +fold)
  markdown
- ocaml
+ (ocaml +lsp)
  (org
   +present)
  (python +lsp)
