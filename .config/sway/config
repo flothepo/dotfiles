@@ -15,6 +15,7 @@ set $filemanager pcmanfm
 
 set $menu wofi --show drun | xargs swaymsg exec --
 set $powermenu powermenu
+set $lock swaylock -f
 
 ### autostarts
 exec lxpolkit
@@ -41,9 +42,9 @@ set $urgent-bg-color     #E53935
 set $focus-text-color     #87CEEB
 
 exec swayidle -w \
-         timeout 300 'swaylock -f -c cfd6e6' \
+         timeout 300 $lock \
          timeout 600 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' \
-         before-sleep 'swaylock -f -c 000000'
+         before-sleep $lock
 
 input * {
     xkb_layout "de"
@@ -82,7 +83,7 @@ input * {
     # Exit sway (logs you out of your Wayland session)
     bindsym $mod+Shift+q exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -b 'Yes, exit sway' 'swaymsg exit'
 
-    bindsym $mod+s exec swaylock -f -c cfd6e6
+    bindsym $mod+s exec $lock
 #
 # Moving around:
 #
