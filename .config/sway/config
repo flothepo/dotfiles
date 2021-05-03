@@ -21,7 +21,7 @@ set $lock swaylock -f
 exec lxpolkit
 exec mako
 exec nextcloud
-
+exec playerctld daemon
 
 output * bg /usr/share/backgrounds/linux_gruv.jpg fill
 
