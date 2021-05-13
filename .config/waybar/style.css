@@ -57,7 +57,7 @@ window#waybar.chromium {
 }
 
 #workspaces button.urgent {
-    background-color: #eb4d4b;
+    background-color: #ef476f;
 }
 
 #mode {
@@ -80,8 +80,9 @@ window#waybar.chromium {
 #idle_inhibitor,
 #mpd {
     padding: 0 10px;
-    margin: 0;
+    /*margin: 0 3 0 0; */
     color: #ffffff;
+    /*border-radius: 5px;*/
 }
 
 #window,
@@ -100,7 +101,7 @@ window#waybar.chromium {
 }
 
 #clock {
-    background-color: #64727D;
+    background-color: #073b4c;
 }
 
 #battery {
@@ -148,16 +149,16 @@ label:focus {
 }
 
 #network {
-    background-color: #2980b9;
+    background-color: #118ab2;
 }
 
 #network.disconnected {
-    background-color: #f53c3c;
+    background-color: #ef476f;
 }
 
 #pulseaudio {
-    background-color: #f1c40f;
-    color: #000000;
+    background-color: #ffd166;
+    color: #111111;
 }
 
 #pulseaudio.muted {
@@ -188,7 +189,7 @@ label:focus {
 }
 
 #tray {
-    background-color: #2980b9;
+    background-color: #118ab2;
 }
 
 #idle_inhibitor {
