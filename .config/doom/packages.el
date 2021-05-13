@@ -1,6 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 
 (package! adoc-mode)
+(package! cliphist)
 (package! company-box)
 (package! ediprolog)
 (package! flyspell-correct)
