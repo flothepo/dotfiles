@@ -1,0 +1,17 @@
+clock
+indicator
+ignore-empty-password
+show-failed-attempts
+fade-in=1
+scaling=fill
+text-color=eeeeee
+color=073b4c
+ring-color=06d6a0
+key-hl-color=049f76
+separator-color=049f76
+inside-color=073b4c
+inside-clear-color=ffd166
+
+ring-wrong-color=ef476f
+inside-wrong-color=073b4c
+text-wrong-color=eeeeee
